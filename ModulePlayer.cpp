@@ -18,12 +18,17 @@ bool ModulePlayer::Start()
 {
 	LOG("Loading player");
 
+	ball.sphere.radius = 2;
+	ball.sphere.color = White;
+	ball.body = App->physics->AddBody(ball.sphere, 0.1f);
+	ball.body->SetPos(0, 2, 0);
+
 	VehicleInfo car;
 
 	// Car properties ----------------------------------------
-	car.chassis_size.Set(2, 2, 4);
+	car.chassis_size.Set(2, 0.5, 4);
 	car.chassis_offset.Set(0, 1.5, 0);
-	car.mass = 500.0f;
+	car.mass = 350.0f;
 	car.suspensionStiffness = 15.88f;
 	car.suspensionCompression = 0.83f;
 	car.suspensionDamping = 0.88f;
@@ -96,8 +101,10 @@ bool ModulePlayer::Start()
 	car.wheels[3].brake = true;
 	car.wheels[3].steering = false;
 
+
 	vehicle = App->physics->AddVehicle(car);
-	vehicle->SetPos(0, 12, 10);
+	vehicle->color = Red;
+	vehicle->SetPos(0, 3, -10);
 	
 	return true;
 }
@@ -115,26 +122,72 @@ update_status ModulePlayer::Update(float dt)
 {
 	turn = acceleration = brake = 0.0f;
 
+
+	//PC MASTER RACE
 	if(App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
 	{
 		acceleration = MAX_ACCELERATION;
 	}
 
-	if(App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
+	if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
 	{
 		if(turn < TURN_DEGREES)
 			turn +=  TURN_DEGREES;
 	}
 
-	if(App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
+	if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
 	{
 		if(turn > -TURN_DEGREES)
 			turn -= TURN_DEGREES;
 	}
 
-	if(App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
+	if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
+	{
+		acceleration = -MAX_ACCELERATION;
+	}
+
+	if (App->input->GetKey(SDL_SCANCODE_KP_1) == KEY_REPEAT || App->input->GetJoystickButton(0, X) == KEY_REPEAT)
 	{
 		brake = BRAKE_POWER;
+	}
+
+	//CONSOLE FOR THE WIN
+	if (App->input->GetJoystickAxis(0, LEFT_STICK_X) != 0)
+	{
+		turn = -TURN_DEGREES* App->input->GetJoystickAxis(0, LEFT_STICK_X);
+	}
+
+	if (App->input->GetJoystickAxis(0, RIGHT_TRIGGER) > 0)
+	{
+		acceleration = MAX_ACCELERATION * App->input->GetJoystickAxis(0, RIGHT_TRIGGER);
+	}
+
+	if (App->input->GetJoystickAxis(0, LEFT_TRIGGER) > 0)
+	{
+		acceleration = -MAX_ACCELERATION * App->input->GetJoystickAxis(0, LEFT_TRIGGER);
+	}
+
+	//MIX
+
+	if (App->input->GetKey(SDL_SCANCODE_KP_2) == KEY_DOWN || App->input->GetJoystickButton(0, A) == KEY_DOWN)
+	{
+		//Turbo
+		btVector3 relativeForce = btVector3(0, 0, 1000 * vehicle->info.mass);
+		btTransform boxTrans;
+		vehicle->vehicle->getRigidBody()->getMotionState()->getWorldTransform(boxTrans);
+		btVector3 correctedForce = (boxTrans * relativeForce) - boxTrans.getOrigin();
+		vehicle->vehicle->getRigidBody()->applyCentralForce(correctedForce);
+	}
+
+	
+
+	if (App->input->GetKey(SDL_SCANCODE_KP_3) == KEY_DOWN || App->input->GetJoystickButton(0, B) == KEY_DOWN)
+	{
+		btVector3 relativeForce = btVector3(0, 1000 * vehicle->info.mass, 0);
+		btTransform boxTrans;
+		vehicle->vehicle->getRigidBody()->getMotionState()->getWorldTransform(boxTrans);
+		btVector3 correctedForce = (boxTrans * relativeForce) - boxTrans.getOrigin();
+		vehicle->vehicle->getRigidBody()->applyCentralForce(correctedForce);
 	}
 
 
@@ -144,30 +197,14 @@ update_status ModulePlayer::Update(float dt)
 
 	vehicle->Render();
 
+	ball.body->GetTransform(ball.sphere.transform.M);
+	ball.sphere.Render();
+
 	char title[80];
-	sprintf_s(title, "%.1f Km/h", vehicle->GetKmh());
+	sprintf_s(title, "Rocket League Chinese version");
 	App->window->SetTitle(title);
 
-	CameraFollow();
-	
 	return UPDATE_CONTINUE;
-}
-
-
-void ModulePlayer::CameraFollow() const
-{
-	btTransform position = vehicle->vehicle->getRigidBody()->getWorldTransform();
-	float x = position.getOrigin().getX();
-	float y = position.getOrigin().getY();
-	float z = position.getOrigin().getZ();
-	btQuaternion rot = position.getRotation();
-	float angle = rot.getAngle();
-
-	vec3 new_pos(x, y, z);
-	App->camera->LookAt(new_pos);
-	new_pos.y += 8;
-	new_pos.z += -12;
-	App->camera->SetPosition(new_pos);
 }
 
 

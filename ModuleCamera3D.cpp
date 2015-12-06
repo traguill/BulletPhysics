@@ -96,6 +96,8 @@ update_status ModuleCamera3D::Update(float dt)
 		Position = Reference + Z * length(Position);
 	}
 
+
+
 	// Recalculate matrix -------------
 	CalculateViewMatrix();
 
@@ -139,14 +141,6 @@ void ModuleCamera3D::Move(const vec3 &Movement)
 {
 	Position += Movement;
 	Reference += Movement;
-
-	CalculateViewMatrix();
-}
-
-void ModuleCamera3D::SetPosition(const vec3 &position)
-{
-	Position = position;
-	Reference = position;
 
 	CalculateViewMatrix();
 }

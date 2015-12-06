@@ -30,6 +30,39 @@ bool ModuleInput::Init()
 		ret = false;
 	}
 
+	if (SDL_InitSubSystem(SDL_INIT_JOYSTICK) < 0)
+	{
+		LOG("SDL_JOYSTICK could not initialize! SDL_Error: %s\n", SDL_GetError());
+		ret = false;
+	}
+
+	num_joysticks = SDL_NumJoysticks();
+
+	LOG("Joysticks connected: %d", num_joysticks);
+
+	if (num_joysticks > 0)
+	{
+		SDL_JoystickEventState(SDL_ENABLE);
+		for (int i = 0; i < num_joysticks; i++)
+		{
+			SDL_Joystick* joystick;
+			joystick = SDL_JoystickOpen(i);
+
+			JOYSTICK* j = new JOYSTICK();
+			j->sdl_joystick = joystick;
+
+			int MAX_JOY_BUTTONS = SDL_JoystickNumButtons(joystick);
+			j->button = new KEY_STATE[MAX_JOY_BUTTONS];
+			memset(j->button, KEY_IDLE, sizeof(KEY_STATE) * MAX_JOY_BUTTONS);
+
+			int MAX_JOY_AXES = SDL_JoystickNumAxes(joystick);
+			j->axis = new Sint16[MAX_JOY_AXES];
+			memset(j->axis, 0, sizeof(Sint16) * MAX_JOY_AXES);
+
+			joysticks.PushBack(j);
+		}
+	}
+
 	return ret;
 }
 
@@ -55,6 +88,37 @@ update_status ModuleInput::PreUpdate(float dt)
 				keyboard[i] = KEY_UP;
 			else
 				keyboard[i] = KEY_IDLE;
+		}
+	}
+
+	for (int n = 0; n < num_joysticks; n++)
+	{
+		int MAX_JOY_BUTTONS = SDL_JoystickNumButtons(joysticks[n]->sdl_joystick);
+		int MAX_JOY_AXIS = SDL_JoystickNumAxes(joysticks[n]->sdl_joystick);
+
+		for (int i = 0; i < MAX_JOY_BUTTONS; i++)
+		{
+			Uint8 joy_button = SDL_JoystickGetButton(joysticks[n]->sdl_joystick, i);
+			if (joy_button == 1)
+			{
+				if (joysticks[n]->button[i] == KEY_IDLE)
+					joysticks[n]->button[i] = KEY_DOWN;
+				else
+					joysticks[n]->button[i] = KEY_REPEAT;
+			}
+			else
+			{
+				if (joysticks[n]->button[i] == KEY_REPEAT || joysticks[n]->button[i] == KEY_DOWN)
+					joysticks[n]->button[i] = KEY_UP;
+				else
+					joysticks[n]->button[i] = KEY_IDLE;
+			}
+		}
+
+		for (int i = 0; i < MAX_JOY_AXIS; i++)
+		{
+			Sint16 axis = SDL_JoystickGetAxis(joysticks[n]->sdl_joystick, i);
+			joysticks[n]->axis[i] = axis;
 		}
 	}
 
@@ -124,6 +188,8 @@ update_status ModuleInput::PreUpdate(float dt)
 bool ModuleInput::CleanUp()
 {
 	LOG("Quitting SDL input event subsystem");
+
 	SDL_QuitSubSystem(SDL_INIT_EVENTS);
+	SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
 	return true;
 }

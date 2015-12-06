@@ -4,10 +4,15 @@
 #include "Globals.h"
 #include "Primitive.h"
 
-#define MAX_SNAKE 2
-
 struct PhysBody3D;
-struct PhysMotor3D;
+struct Cube;
+
+struct GOAL
+{
+	Cube post_r;
+	Cube post_l;
+	Cube post_u;
+};
 
 class ModuleSceneIntro : public Module
 {
@@ -22,23 +27,13 @@ public:
 	void OnCollision(PhysBody3D* body1, PhysBody3D* body2);
 
 public:
-	/*
-	PhysBody3D* pb_snake[MAX_SNAKE];
-	Sphere s_snake[MAX_SNAKE];
+	Cube* floor = NULL;
 
-	PhysBody3D* pb_snake2[MAX_SNAKE];
-	Sphere s_snake2[MAX_SNAKE];
-	*/
+	Cube wall_front;
+	Cube wall_right;
+	Cube wall_left;
+	Cube wall_back;
 
-	PhysBody3D* pb_chassis;
-	Cube p_chassis;
+	GOAL goal_right;
 
-	PhysBody3D* pb_wheel;
-	Cylinder p_wheel;
-
-	PhysBody3D* pb_wheel2;
-	Cylinder p_wheel2;
-
-	PhysMotor3D* left_wheel;
-	PhysMotor3D* right_wheel;
 };
