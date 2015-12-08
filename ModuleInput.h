@@ -110,6 +110,11 @@ public:
 		return ret;
 	}
 
+	int GetNumberJoysticks() const
+	{
+		return num_joysticks;
+	}
+
 
 private:
 	KEY_STATE* keyboard;

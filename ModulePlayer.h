@@ -26,10 +26,18 @@ public:
 	update_status Update(float dt);
 	bool CleanUp();
 
+	void OnCollision(PhysBody3D* body1, PhysBody3D* body2);
+
+private:
+
+	void InputPlayer1();
+
 public:
 
-	//Player1
-	PhysVehicle3D* vehicle;
+	//Players
+	PhysVehicle3D* vehicle = NULL;
+	PhysVehicle3D* vehicle_blue = NULL;
+
 	float turn;
 	float acceleration;
 	float brake;
@@ -37,4 +45,14 @@ public:
 	//Ball
 	BALL ball;
 	
+	//GoalS
+	PhysBody3D*	goal_red = NULL;
+	PhysBody3D*	goal_blue = NULL;
+
+	//Game-Logic
+	int score_red;
+	int score_blue;
+
+private:
+	int joysticks_connected = 0;
 };

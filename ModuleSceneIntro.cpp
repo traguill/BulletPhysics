@@ -57,8 +57,17 @@ bool ModuleSceneIntro::Start()
 	wall_left.size.x = 1;
 	wall_left.size.y = 60;
 	wall_left.size.z = 68;
-	wall_left.SetPos(-53, 30, 0);
+	wall_left.SetPos(-63, 30, 0);
 	App->physics->AddBody(wall_left, 0);
+
+	Cube wl1(10, 12, 16.5f);
+	wl1.SetPos(-58, 6, 25.75f);
+	App->physics->AddBody(wl1, 0);
+	wl1.SetPos(-58, 6, -25.75f);
+	App->physics->AddBody(wl1, 0);
+	Cube wl2(10, 48, 68);
+	wl2.SetPos(-58, 36, 0);
+	App->physics->AddBody(wl2, 0);
 
 	//Create Goals
 	goal_right.post_r.Scale(1, 12, 1);
@@ -69,11 +78,25 @@ bool ModuleSceneIntro::Start()
 	goal_right.post_l.SetPos(53, 6, -17.5f);
 	goal_right.post_u.SetPos(53, 12, 0);
 
-	goal_right.post_l.color = goal_right.post_r.color = goal_right.post_u.color = White;
+	goal_right.post_l.color = goal_right.post_r.color = goal_right.post_u.color = Red;
 
 	App->physics->AddBody(goal_right.post_r, 0);
 	App->physics->AddBody(goal_right.post_l, 0);
 	App->physics->AddBody(goal_right.post_u, 0);
+
+	goal_left.post_r.Scale(1, 12, 1);
+	goal_left.post_l.Scale(1, 12, 1);
+	goal_left.post_u.Scale(1, 1, 37);
+
+	goal_left.post_r.SetPos(-53, 6, 17.5f);
+	goal_left.post_l.SetPos(-53, 6, -17.5f);
+	goal_left.post_u.SetPos(-53, 12, 0);
+
+	goal_left.post_l.color = goal_left.post_r.color = goal_left.post_u.color = Blue;
+
+	App->physics->AddBody(goal_left.post_r, 0);
+	App->physics->AddBody(goal_left.post_l, 0);
+	App->physics->AddBody(goal_left.post_u, 0);
 
 	return ret;
 }
@@ -98,6 +121,10 @@ update_status ModuleSceneIntro::Update(float dt)
 	goal_right.post_l.Render();
 	goal_right.post_r.Render();
 	goal_right.post_u.Render();
+
+	goal_left.post_l.Render();
+	goal_left.post_r.Render();
+	goal_left.post_u.Render();
 
 	return UPDATE_CONTINUE;
 }

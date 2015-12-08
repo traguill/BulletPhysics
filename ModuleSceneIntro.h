@@ -35,5 +35,6 @@ public:
 	Cube wall_back;
 
 	GOAL goal_right;
+	GOAL goal_left;
 
 };

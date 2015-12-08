@@ -49,8 +49,21 @@ void PhysVehicle3D::Render()
 	chassis.transform.M[13] += offset.getY();
 	chassis.transform.M[14] += offset.getZ();
 
-
 	chassis.Render();
+
+	Cube nose(info.nose_size.x, info.nose_size.y, info.nose_size.z);
+	vehicle->getChassisWorldTransform().getOpenGLMatrix(&nose.transform);
+	nose.color = color;
+	btQuaternion q_n = vehicle->getChassisWorldTransform().getRotation();
+	btVector3 offset_n(info.nose_offset.x, info.nose_offset.y, info.nose_offset.z);
+	offset_n = offset_n.rotate(q_n.getAxis(), q_n.getAngle());
+
+	nose.transform.M[12] += offset_n.getX();
+	nose.transform.M[13] += offset_n.getY();
+	nose.transform.M[14] += offset_n.getZ();
+
+	nose.Render();
+	
 }
 
 // ----------------------------------------------------------------------------
