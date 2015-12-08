@@ -21,7 +21,7 @@ bool ModulePlayer::Start()
 	score_blue = score_red = 0;
 
 	//Ball
-	ball.sphere.radius = 2;
+	ball.sphere.radius = 4;
 	ball.sphere.color = White;
 	ball.body = App->physics->AddBody(ball.sphere, 0.1f);
 	ball.body->SetPos(0, 2, 0);
@@ -142,8 +142,8 @@ bool ModulePlayer::CleanUp()
 
 // Update: draw background
 update_status ModulePlayer::Update(float dt)
-{
-	
+{	
+
 	//Get input
 	if (joysticks_connected > 0)
 		InputPlayer1();
@@ -157,6 +157,20 @@ update_status ModulePlayer::Update(float dt)
 	char title[80];
 	sprintf_s(title, "Rocket League Chinese version:   Blue %d - %d Red", score_blue, score_red);
 	App->window->SetTitle(title);
+
+	return UPDATE_CONTINUE;
+}
+
+update_status ModulePlayer::PostUpdate(float dt)
+{
+	vec3 pos;
+	pos.x = vehicle->vehicle->getChassisWorldTransform().getOrigin().getX();
+	pos.y = vehicle->vehicle->getChassisWorldTransform().getOrigin().getY();
+	pos.z = vehicle->vehicle->getChassisWorldTransform().getOrigin().getZ();
+	App->camera->LookAt(pos);
+	pos.y += 10;
+	pos.z -= 38;
+	App->camera->Position = pos;
 
 	return UPDATE_CONTINUE;
 }
@@ -200,6 +214,13 @@ void ModulePlayer::InputPlayer1()
 	if (App->input->GetJoystickAxis(0, LEFT_STICK_X) != 0)
 	{
 		turn = -TURN_DEGREES* App->input->GetJoystickAxis(0, LEFT_STICK_X);
+	}
+
+	if (App->input->GetJoystickAxis(0, RIGHT_STICK_X) != 0 || App->input->GetJoystickAxis(0, RIGHT_STICK_Y) != 0)
+	{
+		float dx = App->input->GetJoystickAxis(0, RIGHT_STICK_X);
+		float dy = App->input->GetJoystickAxis(0, RIGHT_STICK_Y);
+		App->camera->Rotate(dx*10, dy*10);
 	}
 
 	//Go forward
@@ -269,6 +290,32 @@ void ModulePlayer::InputPlayer1()
 
 		vehicle->vehicle->getRigidBody()->applyForce(correctedForce, correctedPosition);
 	}
+
+
+	if (App->input->GetJoystickButton(0, DPAD_RIGHT) == KEY_DOWN)
+	{
+		btVector3 gravity(10.0f, 0, 0);
+		vehicle->vehicle->getRigidBody()->setGravity(gravity);
+	}
+
+	if (App->input->GetJoystickButton(0, DPAD_LEFT) == KEY_DOWN)
+	{
+		btVector3 gravity(-10.0f, 0, 0);
+		vehicle->vehicle->getRigidBody()->setGravity(gravity);
+	}
+
+	if (App->input->GetJoystickButton(0, DPAD_UP) == KEY_DOWN)
+	{
+		btVector3 gravity(0, 10.0f, 0);
+		vehicle->vehicle->getRigidBody()->setGravity(gravity);
+	}
+
+	if (App->input->GetJoystickButton(0, DPAD_DOWN) == KEY_DOWN)
+	{
+		btVector3 gravity(0, -10.0f, 0);
+		vehicle->vehicle->getRigidBody()->setGravity(gravity);
+	}
+
 
 	vehicle->ApplyEngineForce(acceleration);
 	vehicle->Turn(turn);

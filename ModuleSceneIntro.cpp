@@ -21,27 +21,27 @@ bool ModuleSceneIntro::Start()
 	App->camera->LookAt(vec3(0, 0, 0));
 
 	//Create floor
-	floor = new Cube(106, 1, 68);
+	floor = new Cube(318, 1, 204);
 	floor->color = Green;
 	App->physics->AddBody(*floor, 0);
 
 	//Create walls
 	
-	wall_front.size.x = 106;
+	wall_front.size.x = 318;
 	wall_front.size.y = 60;
 	wall_front.size.z = 1;
-	wall_front.SetPos(0, 30, -34);
+	wall_front.SetPos(0, 30, -102);
 	App->physics->AddBody(wall_front, 0);
 
-	wall_back.size.x = 106;
+	wall_back.size.x = 318;
 	wall_back.size.y = 60;
 	wall_back.size.z = 1;
-	wall_back.SetPos(0, 30, 34);
+	wall_back.SetPos(0, 30, 102);
 	App->physics->AddBody(wall_back, 0);
 
 	wall_right.size.x = 1;
 	wall_right.size.y = 60;
-	wall_right.size.z = 68;
+	wall_right.size.z = 204;
 	wall_right.SetPos(63, 30, 0);
 	App->physics->AddBody(wall_right, 0);
 
@@ -50,13 +50,13 @@ bool ModuleSceneIntro::Start()
 	App->physics->AddBody(wr1, 0);
 	wr1.SetPos(58, 6, -25.75f);
 	App->physics->AddBody(wr1, 0);
-	Cube wr2(10, 48, 68);
+	Cube wr2(10, 48, 204);
 	wr2.SetPos(58, 36, 0);
 	App->physics->AddBody(wr2, 0);
 
 	wall_left.size.x = 1;
 	wall_left.size.y = 60;
-	wall_left.size.z = 68;
+	wall_left.size.z = 204;
 	wall_left.SetPos(-63, 30, 0);
 	App->physics->AddBody(wall_left, 0);
 
@@ -65,7 +65,7 @@ bool ModuleSceneIntro::Start()
 	App->physics->AddBody(wl1, 0);
 	wl1.SetPos(-58, 6, -25.75f);
 	App->physics->AddBody(wl1, 0);
-	Cube wl2(10, 48, 68);
+	Cube wl2(10, 48, 204);
 	wl2.SetPos(-58, 36, 0);
 	App->physics->AddBody(wl2, 0);
 
@@ -74,9 +74,9 @@ bool ModuleSceneIntro::Start()
 	goal_right.post_l.Scale(1, 12, 1);
 	goal_right.post_u.Scale(1, 1, 37);
 
-	goal_right.post_r.SetPos(53, 6, 17.5f);
-	goal_right.post_l.SetPos(53, 6, -17.5f);
-	goal_right.post_u.SetPos(53, 12, 0);
+	goal_right.post_r.SetPos(159, 6, 17.5f);
+	goal_right.post_l.SetPos(159, 6, -17.5f);
+	goal_right.post_u.SetPos(159, 12, 0);
 
 	goal_right.post_l.color = goal_right.post_r.color = goal_right.post_u.color = Red;
 
@@ -88,9 +88,9 @@ bool ModuleSceneIntro::Start()
 	goal_left.post_l.Scale(1, 12, 1);
 	goal_left.post_u.Scale(1, 1, 37);
 
-	goal_left.post_r.SetPos(-53, 6, 17.5f);
-	goal_left.post_l.SetPos(-53, 6, -17.5f);
-	goal_left.post_u.SetPos(-53, 12, 0);
+	goal_left.post_r.SetPos(-159, 6, 17.5f);
+	goal_left.post_l.SetPos(-159, 6, -17.5f);
+	goal_left.post_u.SetPos(-159, 12, 0);
 
 	goal_left.post_l.color = goal_left.post_r.color = goal_left.post_u.color = Blue;
 

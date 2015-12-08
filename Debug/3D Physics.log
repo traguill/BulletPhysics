@@ -1,21 +1,39 @@
-﻿Build started 8/12/2015 13:41:02.
+﻿Build started 8/12/2015 20:03:28.
      1>Project "C:\Users\guillem\Documents\GitHub\BulletPhysics\3D Physics.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl- /Od /Oy- /D _MBCS /Gm /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt ModuleCamera3D.cpp ModulePhysics3D.cpp ModulePlayer.cpp ModuleSceneIntro.cpp PhysBody3D.cpp PhysVehicle3D.cpp
-         PhysBody3D.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl- /Od /Oy- /D _MBCS /Gm /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Application.cpp Main.cpp ModuleAudio.cpp ModuleCamera3D.cpp ModuleInput.cpp ModulePhysics3D.cpp ModulePlayer.cpp ModuleRenderer3D.cpp ModuleSceneIntro.cpp ModuleWindow.cpp
          ModulePlayer.cpp
      1>c:\users\guillem\documents\github\bulletphysics\modulesceneintro.h(8): warning C4099: 'Cube' : type name first seen using 'class' now seen using 'struct'
                  c:\users\guillem\documents\github\bulletphysics\primitive.h(40) : see declaration of 'Cube'
          Generating Code...
          Compiling...
-         PhysVehicle3D.cpp
+         ModuleWindow.cpp
+     1>c:\users\guillem\documents\github\bulletphysics\modulesceneintro.h(8): warning C4099: 'Cube' : type name first seen using 'class' now seen using 'struct'
+                 c:\users\guillem\documents\github\bulletphysics\primitive.h(40) : see declaration of 'Cube'
          ModuleSceneIntro.cpp
+     1>c:\users\guillem\documents\github\bulletphysics\modulesceneintro.h(8): warning C4099: 'Cube' : type name first seen using 'class' now seen using 'struct'
+                 c:\users\guillem\documents\github\bulletphysics\primitive.h(40) : see declaration of 'Cube'
+         ModuleRenderer3D.cpp
      1>c:\users\guillem\documents\github\bulletphysics\modulesceneintro.h(8): warning C4099: 'Cube' : type name first seen using 'class' now seen using 'struct'
                  c:\users\guillem\documents\github\bulletphysics\primitive.h(40) : see declaration of 'Cube'
          ModulePhysics3D.cpp
      1>c:\users\guillem\documents\github\bulletphysics\modulesceneintro.h(8): warning C4099: 'Cube' : type name first seen using 'class' now seen using 'struct'
                  c:\users\guillem\documents\github\bulletphysics\primitive.h(40) : see declaration of 'Cube'
+         ModuleInput.cpp
+     1>c:\users\guillem\documents\github\bulletphysics\modulesceneintro.h(8): warning C4099: 'Cube' : type name first seen using 'class' now seen using 'struct'
+                 c:\users\guillem\documents\github\bulletphysics\primitive.h(40) : see declaration of 'Cube'
          ModuleCamera3D.cpp
+     1>c:\users\guillem\documents\github\bulletphysics\modulesceneintro.h(8): warning C4099: 'Cube' : type name first seen using 'class' now seen using 'struct'
+                 c:\users\guillem\documents\github\bulletphysics\primitive.h(40) : see declaration of 'Cube'
+     1>c:\users\guillem\documents\github\bulletphysics\modulecamera3d.cpp(163): warning C4244: 'initializing' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\guillem\documents\github\bulletphysics\modulecamera3d.cpp(164): warning C4244: 'initializing' : conversion from 'float' to 'int', possible loss of data
+         ModuleAudio.cpp
+     1>c:\users\guillem\documents\github\bulletphysics\modulesceneintro.h(8): warning C4099: 'Cube' : type name first seen using 'class' now seen using 'struct'
+                 c:\users\guillem\documents\github\bulletphysics\primitive.h(40) : see declaration of 'Cube'
+         Main.cpp
+     1>c:\users\guillem\documents\github\bulletphysics\modulesceneintro.h(8): warning C4099: 'Cube' : type name first seen using 'class' now seen using 'struct'
+                 c:\users\guillem\documents\github\bulletphysics\primitive.h(40) : see declaration of 'Cube'
+         Application.cpp
      1>c:\users\guillem\documents\github\bulletphysics\modulesceneintro.h(8): warning C4099: 'Cube' : type name first seen using 'class' now seen using 'struct'
                  c:\users\guillem\documents\github\bulletphysics\primitive.h(40) : see declaration of 'Cube'
          Generating Code...
@@ -44,4 +62,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:07.62
+Time Elapsed 00:00:11.43

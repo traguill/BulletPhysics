@@ -157,3 +157,40 @@ void ModuleCamera3D::CalculateViewMatrix()
 	ViewMatrix = mat4x4(X.x, Y.x, Z.x, 0.0f, X.y, Y.y, Z.y, 0.0f, X.z, Y.z, Z.z, 0.0f, -dot(X, Position), -dot(Y, Position), -dot(Z, Position), 1.0f);
 	ViewMatrixInverse = inverse(ViewMatrix);
 }
+
+void ModuleCamera3D::Rotate(float x, float y)
+{
+	int dx = -x;
+	int dy = -y;
+
+	float Sensitivity = 0.25f;
+
+	Position -= Reference;
+
+	if (dx != 0)
+	{
+		float DeltaX = (float)dx * Sensitivity;
+
+		X = rotate(X, DeltaX, vec3(0.0f, 1.0f, 0.0f));
+		Y = rotate(Y, DeltaX, vec3(0.0f, 1.0f, 0.0f));
+		Z = rotate(Z, DeltaX, vec3(0.0f, 1.0f, 0.0f));
+	}
+
+	if (dy != 0)
+	{
+		float DeltaY = (float)dy * Sensitivity;
+
+		Y = rotate(Y, DeltaY, X);
+		Z = rotate(Z, DeltaY, X);
+
+		if (Y.y < 0.0f)
+		{
+			Z = vec3(0.0f, Z.y > 0.0f ? 1.0f : -1.0f, 0.0f);
+			Y = cross(Z, X);
+		}
+	}
+
+	Position = Reference + Z * length(Position);
+
+	CalculateViewMatrix();
+}

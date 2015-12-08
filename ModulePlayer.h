@@ -6,7 +6,7 @@
 struct PhysVehicle3D;
 struct PhysBody3D;
 
-#define MAX_ACCELERATION 1000.0f
+#define MAX_ACCELERATION 3000.0f
 #define TURN_DEGREES 15.0f * DEGTORAD
 #define BRAKE_POWER 1000.0f
 
@@ -24,6 +24,7 @@ public:
 
 	bool Start();
 	update_status Update(float dt);
+	update_status PostUpdate(float dt);
 	bool CleanUp();
 
 	void OnCollision(PhysBody3D* body1, PhysBody3D* body2);
