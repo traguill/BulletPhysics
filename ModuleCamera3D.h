@@ -3,15 +3,17 @@
 #include "Globals.h"
 #include "glmath.h"
 
-class ModuleCamera3D : public Module
+struct Camera
 {
 public:
-	ModuleCamera3D(Application* app, bool start_enabled = true);
-	~ModuleCamera3D();
+	vec3 X, Y, Z, Position, Reference;
+private:
+	mat4x4 ViewMatrix, ViewMatrixInverse;
 
-	bool Start();
-	update_status Update(float dt);
-	bool CleanUp();
+public:
+
+	Camera();
+	~Camera();
 
 	void Look(const vec3 &Position, const vec3 &Reference, bool RotateAroundReference = false);
 	void LookAt(const vec3 &Spot);
@@ -22,11 +24,21 @@ private:
 
 	void CalculateViewMatrix();
 
+};
+
+class ModuleCamera3D : public Module
+{
 public:
-	
-	vec3 X, Y, Z, Position, Reference;
+	ModuleCamera3D(Application* app, bool start_enabled = true);
+	~ModuleCamera3D();
+
+	bool Start();
+	update_status Update(float dt);
+	bool CleanUp();
+
+	Camera* GetCam(int index);
 
 private:
-
-	mat4x4 ViewMatrix, ViewMatrixInverse;
+	Camera* cam1;
+	Camera* cam2;
 };
