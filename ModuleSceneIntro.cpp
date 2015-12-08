@@ -17,11 +17,8 @@ bool ModuleSceneIntro::Start()
 	LOG("Loading Intro assets");
 	bool ret = true;
 
-	App->camera->GetCam(0)->Move(vec3(20.0f, 50.0f, 0.0f));
-	App->camera->GetCam(0)->LookAt(vec3(0, 0, 0));
-
-	App->camera->GetCam(1)->Move(vec3(0.0f, 100.0f, 200.0f));
-	App->camera->GetCam(1)->LookAt(vec3(0, 0, 0));
+	App->camera->Move(vec3(20.0f, 50.0f, 0.0f));
+	App->camera->LookAt(vec3(0, 0, 0));
 
 	//Create floor
 	floor = new Cube(106, 1, 68);

@@ -10,7 +10,6 @@
 
 ModuleRenderer3D::ModuleRenderer3D(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
-	
 }
 
 // Destructor
@@ -100,38 +99,23 @@ bool ModuleRenderer3D::Init()
 	// Projection matrix for
 	OnResize(SCREEN_WIDTH, SCREEN_HEIGHT);
 
-	glEnable(GL_SCISSOR_TEST);
-
 	return ret;
 }
 
 // PreUpdate: clear buffer
 update_status ModuleRenderer3D::PreUpdate(float dt)
 {
-	glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-	glScissor(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
 
-	//CAM 0
-	glViewport(0, 0, SCREEN_WIDTH/2, SCREEN_HEIGHT);
-	glScissor(0, 0, SCREEN_WIDTH / 2, SCREEN_HEIGHT);
-
 	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	glLoadMatrixf(App->camera->GetCam(0)->GetViewMatrix());
+	glLoadMatrixf(App->camera->GetViewMatrix());
 
-	
-	//CAM 1
-	glViewport(SCREEN_WIDTH/2, 0, SCREEN_WIDTH/2, SCREEN_HEIGHT);
-	glScissor(SCREEN_WIDTH / 2, 0, SCREEN_WIDTH/2, SCREEN_HEIGHT);
+	// light 0 on cam pos
+	lights[0].SetPos(App->camera->Position.x, App->camera->Position.y, App->camera->Position.z);
 
-	glTranslatef(SCREEN_WIDTH / 2, 0, 0);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	
-	glLoadMatrixf(App->camera->GetCam(1)->GetViewMatrix());
-
+	for(uint i = 0; i < MAX_LIGHTS; ++i)
+		lights[i].Render();
 
 	return UPDATE_CONTINUE;
 }
