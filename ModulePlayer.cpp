@@ -29,12 +29,12 @@ bool ModulePlayer::Start()
 
 	//Goals
 	Cube g_red(10, 11, 35);
-	g_red.SetPos(58, 5.5f, 0);
+	g_red.SetPos(169, 5.5f, 0);
 	goal_red = App->physics->AddBody(g_red, 0, true);
 	goal_red->collision_listeners.add(this);
 
 	Cube b_red(10, 11, 35);
-	b_red.SetPos(-58, 5.5f, 0);
+	b_red.SetPos(-169, 5.5f, 0);
 	goal_blue = App->physics->AddBody(b_red, 0, true);
 	goal_blue->collision_listeners.add(this);
 

@@ -42,31 +42,31 @@ bool ModuleSceneIntro::Start()
 	wall_right.size.x = 1;
 	wall_right.size.y = 60;
 	wall_right.size.z = 204;
-	wall_right.SetPos(63, 30, 0);
+	wall_right.SetPos(169, 30, 0);
 	App->physics->AddBody(wall_right, 0);
 
-	Cube wr1(10, 12, 16.5f);
-	wr1.SetPos(58, 6, 25.75f);
+	Cube wr1(10, 12, 84);
+	wr1.SetPos(164, 6, 60.0f);
 	App->physics->AddBody(wr1, 0);
-	wr1.SetPos(58, 6, -25.75f);
+	wr1.SetPos(164, 6, -60.0f);
 	App->physics->AddBody(wr1, 0);
 	Cube wr2(10, 48, 204);
-	wr2.SetPos(58, 36, 0);
+	wr2.SetPos(164, 36, 0);
 	App->physics->AddBody(wr2, 0);
 
 	wall_left.size.x = 1;
 	wall_left.size.y = 60;
 	wall_left.size.z = 204;
-	wall_left.SetPos(-63, 30, 0);
+	wall_left.SetPos(-169, 30, 0);
 	App->physics->AddBody(wall_left, 0);
 
-	Cube wl1(10, 12, 16.5f);
-	wl1.SetPos(-58, 6, 25.75f);
+	Cube wl1(10, 12, 84);
+	wl1.SetPos(-164, 6, 60.0f);
 	App->physics->AddBody(wl1, 0);
-	wl1.SetPos(-58, 6, -25.75f);
+	wl1.SetPos(-164, 6, -60.0f);
 	App->physics->AddBody(wl1, 0);
 	Cube wl2(10, 48, 204);
-	wl2.SetPos(-58, 36, 0);
+	wl2.SetPos(-164, 36, 0);
 	App->physics->AddBody(wl2, 0);
 
 	//Create Goals
