@@ -1,4 +1,4 @@
-﻿Build started 8/12/2015 22:02:53.
+﻿Build started 9/12/2015 11:32:03.
      1>Project "C:\Users\guillem\Documents\GitHub\BulletPhysics\3D Physics.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl- /Od /Oy- /D _MBCS /Gm /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt ModulePlayer.cpp
@@ -29,4 +29,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:02.98
+Time Elapsed 00:00:02.96

@@ -32,11 +32,14 @@ public:
 private:
 
 	void InputPlayer1();
+	void InputPlayer2();
+
+	void Respawn();
 
 public:
 
 	//Players
-	PhysVehicle3D* vehicle = NULL;
+	PhysVehicle3D* vehicle_red = NULL;
 	PhysVehicle3D* vehicle_blue = NULL;
 
 	float turn;
