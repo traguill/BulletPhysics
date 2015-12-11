@@ -3,6 +3,10 @@
 #include "PhysBody3D.h"
 #include "ModuleCamera3D.h"
 
+#include "SDL\include\SDL_opengl.h"
+#include <gl/GL.h>
+#include <gl/GLU.h>
+
 ModuleCamera3D::ModuleCamera3D(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
 	CalculateViewMatrix();
@@ -193,4 +197,16 @@ void ModuleCamera3D::Rotate(float x, float y)
 	Position = Reference + Z * length(Position);
 
 	CalculateViewMatrix();
+}
+
+void ModuleCamera3D::From3Dto2D(vec3 point, int& x, int& y)
+{
+	mat4x4 projection, view_projection;
+	glGetFloatv(GL_PROJECTION_MATRIX, projection.M);
+
+	view_projection = projection * ViewMatrix;
+	vec3 screen = multiply(point, view_projection);
+
+	x = ((screen.x +1) / 2) * SCREEN_WIDTH;
+	y = ((1 - screen.y) / 2) * SCREEN_HEIGHT;
 }

@@ -62,6 +62,17 @@ vec3 cross(const vec3 &u, const vec3 &v)
 	return vec3(u.y * v.z - u.z * v.y, u.z * v.x - u.x * v.z, u.x * v.y - u.y * v.x);
 }
 
+vec3 multiply (const vec3& u, const mat4x4& mat)
+{
+	vec3 ret;
+
+	ret.x = mat.M[0] * u.x + mat.M[4] * u.y + mat.M[8] * u.z + mat.M[12] * 1;
+	ret.y = mat.M[1] * u.x + mat.M[5] * u.y + mat.M[9] * u.z + mat.M[13] * 1;
+	ret.z = mat.M[2] * u.x + mat.M[6] * u.y + mat.M[10] * u.z + mat.M[14] * 1;
+
+	return ret;
+}
+
 float dot(const vec3 &u, const vec3 &v)
 {
 	return u.x * v.x + u.y * v.y + u.z * v.z;

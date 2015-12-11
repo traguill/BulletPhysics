@@ -20,6 +20,9 @@ public:
 
 	void Rotate(float x, float y);
 
+	//Transform a 3D point to a point of the screen
+	void From3Dto2D(vec3 point, int& x, int& y); 
+
 private:
 
 	void CalculateViewMatrix();
