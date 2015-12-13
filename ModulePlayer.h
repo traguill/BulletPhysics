@@ -67,6 +67,9 @@ public:
 	p2List<POWERUP> power_ups; //List of power ups just for render
 
 	POWERUP speed_A;
+	POWERUP speed_B;
+	POWERUP brake_A;
+	POWERUP brake_B;
 
 	//Game-Logic
 	int score_red;

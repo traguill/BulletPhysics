@@ -40,14 +40,35 @@ bool ModulePlayer::Start()
 
 	//Power ups
 
-	Cube speed_up_c(20, 1, 5);
-	speed_up_c.color = Orange;
-	speed_up_c.SetPos(-20, 1, 0);
+	Cube speed_up_c(30, 1, 10);
+	speed_up_c.color = Yellow;
+	speed_up_c.SetPos(20, 1, 92);
 
 	speed_A.cube = speed_up_c;
 	speed_A.body = App->physics->AddBody(speed_up_c, 0, true);
 	speed_A.body->collision_listeners.add(this);
 	power_ups.add(speed_A);
+
+	speed_up_c.SetPos(20, 1, -92);
+	speed_B.cube = speed_up_c;
+	speed_B.body = App->physics->AddBody(speed_up_c, 0, true);
+	speed_B.body->collision_listeners.add(this);
+	power_ups.add(speed_B);
+
+	Cube brake_c(20, 1, 20);
+	brake_c.color = Pink;
+	brake_c.SetPos(82, 1, -51);
+
+	brake_A.cube = brake_c;
+	brake_A.body = App->physics->AddBody(brake_c, 0, true);
+	brake_A.body->collision_listeners.add(this);
+	power_ups.add(brake_A);
+
+	brake_c.SetPos(-82, 1, 51);
+	brake_B.cube = brake_c;
+	brake_B.body = App->physics->AddBody(brake_c, 0, true);
+	brake_B.body->collision_listeners.add(this);
+	power_ups.add(brake_B);
 
 	//Cars
 	
@@ -220,9 +241,16 @@ void ModulePlayer::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 	}
 	
 	//Power ups
-	if (body1 == speed_A.body && body2 != ball.body)
+	if (body1 == speed_A.body || body1 == speed_B.body)
 	{
-		Turbo(body2, true);
+		if (body2 != ball.body)
+			Turbo(body2);
+	}
+
+	if (body1 == brake_A.body || body1 == brake_B.body)
+	{
+		if (body2 != ball.body)
+			Turbo(body2, true);
 	}
 }
 
