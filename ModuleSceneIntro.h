@@ -5,7 +5,7 @@
 #include "Primitive.h"
 
 struct PhysBody3D;
-struct Cube;
+class Cube;
 
 struct GOAL
 {
