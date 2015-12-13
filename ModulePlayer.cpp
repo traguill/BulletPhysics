@@ -164,6 +164,8 @@ bool ModulePlayer::Start()
 	Respawn();
 
 	joysticks_connected = App->input->GetNumberJoysticks();
+
+	
 	
 	return true;
 }
@@ -181,10 +183,13 @@ update_status ModulePlayer::Update(float dt)
 {	
 
 	//Get input
+	//Joystikcks_input
 	if (joysticks_connected > 0)
 		InputPlayer1();
 	if (joysticks_connected > 1)
 		InputPlayer2();
+	KeyInputPlayer1();
+	KeyInputPlayer2();
 
 	//Render
 	vehicle_red->Render();
@@ -205,6 +210,12 @@ update_status ModulePlayer::Update(float dt)
 	char title[80];
 	sprintf_s(title, "Rocket League Chinese version:   Blue %d - %d Red", score_blue, score_red);
 	App->window->SetTitle(title);
+
+	if (match_time.ReadSec() == 6.0f)
+	{
+		match_time.Stop();
+		Respawn();
+	}
 
 	return UPDATE_CONTINUE;
 }
@@ -267,6 +278,8 @@ void ModulePlayer::Respawn()
 
 	ball.body->SetPos(0, 2, 0);
 	ball.body->Stop();
+
+	match_time.Start();
 }
 
 
@@ -511,6 +524,269 @@ void ModulePlayer::InputPlayer2()
 	vehicle_blue->Brake(brake);
 }
 
+void ModulePlayer::KeyInputPlayer1()
+{
+	turn = acceleration = brake = 0.0f;
+	
+	//Not for computer
+	//Cam Control Debug for now
+	/*if (App->input->GetJoystickAxis(0, RIGHT_STICK_X) != 0 || App->input->GetJoystickAxis(0, RIGHT_STICK_Y) != 0)
+	{
+		float dx = App->input->GetJoystickAxis(0, RIGHT_STICK_X);
+		float dy = App->input->GetJoystickAxis(0, RIGHT_STICK_Y);
+		App->camera->Rotate(dx * 10, dy * 10);
+	}*/
+
+	//Break
+	if (SDL_SCANCODE_E == KEY_DOWN)
+	{
+		brake = BRAKE_POWER;
+	}
+
+	//Direction
+	if (SDL_SCANCODE_A == KEY_DOWN)
+	{
+		turn = -TURN_DEGREES;
+	}
+	if (SDL_SCANCODE_D == KEY_DOWN)
+	{
+		turn = +TURN_DEGREES;
+	}
+
+
+	//Go forward
+	if (SDL_SCANCODE_W == KEY_DOWN)
+	{
+		acceleration = MAX_ACCELERATION;
+	}
+
+	//Go backward
+	if (SDL_SCANCODE_S ==KEY_DOWN)
+	{
+		acceleration = -MAX_ACCELERATION;
+	}
+
+
+	//Turbo
+	if (SDL_SCANCODE_SPACE == KEY_DOWN)
+	{
+		/*btVector3 relativeForce = btVector3(0, 0, 1000 * vehicle_red->info.mass);
+		btTransform boxTrans;
+		vehicle_red->vehicle->getRigidBody()->getMotionState()->getWorldTransform(boxTrans);
+		btVector3 correctedForce = (boxTrans * relativeForce) - boxTrans.getOrigin();
+		vehicle_red->vehicle->getRigidBody()->applyCentralForce(correctedForce);*/
+		Turbo(vehicle_red);
+	}
+	//NOT FOR COMPUTER
+	/*
+	//FrontFlip
+	if (App->input->GetJoystickButton(0, B) == KEY_DOWN)
+	{
+		btVector3 relativeForce = btVector3(0, 485 * vehicle_red->info.mass, 0);
+		btVector3 relativePosition = btVector3(0, 0, -vehicle_red->info.chassis_size.z / 2);
+
+		btTransform boxTrans;
+		vehicle_red->vehicle->getRigidBody()->getMotionState()->getWorldTransform(boxTrans);
+		btVector3 correctedForce = (boxTrans * relativeForce) - boxTrans.getOrigin();
+		btVector3 correctedPosition = (boxTrans * relativePosition) - boxTrans.getOrigin();
+
+		vehicle_red->vehicle->getRigidBody()->applyForce(correctedForce, correctedPosition);
+	}
+
+	//Roll (right)
+	if (App->input->GetJoystickButton(0, RB) == KEY_DOWN)
+	{
+		btTransform boxTrans;
+		vehicle_red->vehicle->getRigidBody()->getMotionState()->getWorldTransform(boxTrans);
+
+		btVector3 relativeForce = btVector3(0, 400 * vehicle_red->info.mass, 0);
+		btVector3 relativePosition = btVector3(vehicle_red->info.chassis_size.x / 2, 0, 0);
+
+		btVector3 correctedForce = (boxTrans * relativeForce) - boxTrans.getOrigin();
+		btVector3 correctedPosition = (boxTrans * relativePosition) - boxTrans.getOrigin();
+
+		vehicle_red->vehicle->getRigidBody()->applyForce(correctedForce, correctedPosition);
+	}
+
+	//Roll (left)
+	if (App->input->GetJoystickButton(0, LB) == KEY_DOWN)
+	{
+		btTransform boxTrans;
+		vehicle_red->vehicle->getRigidBody()->getMotionState()->getWorldTransform(boxTrans);
+
+		btVector3 relativeForce = btVector3(0, 400 * vehicle_red->info.mass, 0);
+		btVector3 relativePosition = btVector3(vehicle_red->info.chassis_size.x / -2, 0, 0);
+
+		btVector3 correctedForce = (boxTrans * relativeForce) - boxTrans.getOrigin();
+		btVector3 correctedPosition = (boxTrans * relativePosition) - boxTrans.getOrigin();
+
+		vehicle_red->vehicle->getRigidBody()->applyForce(correctedForce, correctedPosition);
+	}
+
+	*/
+
+	//NO SE LO QUE ES AIXO
+	if (App->input->GetJoystickButton(0, DPAD_RIGHT) == KEY_DOWN)
+	{
+		btVector3 gravity(10.0f, 0, 0);
+		vehicle_red->vehicle->getRigidBody()->setGravity(gravity);
+	}
+
+	if (App->input->GetJoystickButton(0, DPAD_LEFT) == KEY_DOWN)
+	{
+		btVector3 gravity(-10.0f, 0, 0);
+		vehicle_red->vehicle->getRigidBody()->setGravity(gravity);
+	}
+
+	if (App->input->GetJoystickButton(0, DPAD_UP) == KEY_DOWN)
+	{
+		btVector3 gravity(0, 10.0f, 0);
+		vehicle_red->vehicle->getRigidBody()->setGravity(gravity);
+	}
+
+	if (App->input->GetJoystickButton(0, DPAD_DOWN) == KEY_DOWN)
+	{
+		btVector3 gravity(0, -10.0f, 0);
+		vehicle_red->vehicle->getRigidBody()->setGravity(gravity);
+	}
+
+
+	vehicle_red->ApplyEngineForce(acceleration);
+	vehicle_red->Turn(turn);
+	vehicle_red->Brake(brake);
+}
+void ModulePlayer::KeyInputPlayer2()
+{
+	turn = acceleration = brake = 0.0f;
+
+	//Not for computer
+	//Cam Control Debug for now
+	/*if (App->input->GetJoystickAxis(0, RIGHT_STICK_X) != 0 || App->input->GetJoystickAxis(0, RIGHT_STICK_Y) != 0)
+	{
+	float dx = App->input->GetJoystickAxis(0, RIGHT_STICK_X);
+	float dy = App->input->GetJoystickAxis(0, RIGHT_STICK_Y);
+	App->camera->Rotate(dx * 10, dy * 10);
+	}*/
+
+	//Break
+	if (SDL_SCANCODE_0 == KEY_DOWN)
+	{
+		brake = BRAKE_POWER;
+	}
+
+	//Direction
+	if (SDL_SCANCODE_LEFT == KEY_DOWN)
+	{
+		turn = -TURN_DEGREES;
+	}
+	if (SDL_SCANCODE_RIGHT == KEY_DOWN)
+	{
+		turn = +TURN_DEGREES;
+	}
+
+
+	//Go forward
+	if (SDL_SCANCODE_UP == KEY_DOWN)
+	{
+		acceleration = MAX_ACCELERATION;
+	}
+
+	//Go backward
+	if (SDL_SCANCODE_DOWN == KEY_DOWN)
+	{
+		acceleration = -MAX_ACCELERATION;
+	}
+
+
+	//Turbo
+	if (SDL_SCANCODE_1 == KEY_DOWN)
+	{
+		/*btVector3 relativeForce = btVector3(0, 0, 1000 * vehicle_red->info.mass);
+		btTransform boxTrans;
+		vehicle_red->vehicle->getRigidBody()->getMotionState()->getWorldTransform(boxTrans);
+		btVector3 correctedForce = (boxTrans * relativeForce) - boxTrans.getOrigin();
+		vehicle_red->vehicle->getRigidBody()->applyCentralForce(correctedForce);*/
+		Turbo(vehicle_blue);
+	}
+	//NOT FOR COMPUTER
+	/*
+	//FrontFlip
+	if (App->input->GetJoystickButton(0, B) == KEY_DOWN)
+	{
+	btVector3 relativeForce = btVector3(0, 485 * vehicle_red->info.mass, 0);
+	btVector3 relativePosition = btVector3(0, 0, -vehicle_red->info.chassis_size.z / 2);
+
+	btTransform boxTrans;
+	vehicle_red->vehicle->getRigidBody()->getMotionState()->getWorldTransform(boxTrans);
+	btVector3 correctedForce = (boxTrans * relativeForce) - boxTrans.getOrigin();
+	btVector3 correctedPosition = (boxTrans * relativePosition) - boxTrans.getOrigin();
+
+	vehicle_red->vehicle->getRigidBody()->applyForce(correctedForce, correctedPosition);
+	}
+
+	//Roll (right)
+	if (App->input->GetJoystickButton(0, RB) == KEY_DOWN)
+	{
+	btTransform boxTrans;
+	vehicle_red->vehicle->getRigidBody()->getMotionState()->getWorldTransform(boxTrans);
+
+	btVector3 relativeForce = btVector3(0, 400 * vehicle_red->info.mass, 0);
+	btVector3 relativePosition = btVector3(vehicle_red->info.chassis_size.x / 2, 0, 0);
+
+	btVector3 correctedForce = (boxTrans * relativeForce) - boxTrans.getOrigin();
+	btVector3 correctedPosition = (boxTrans * relativePosition) - boxTrans.getOrigin();
+
+	vehicle_red->vehicle->getRigidBody()->applyForce(correctedForce, correctedPosition);
+	}
+
+	//Roll (left)
+	if (App->input->GetJoystickButton(0, LB) == KEY_DOWN)
+	{
+	btTransform boxTrans;
+	vehicle_red->vehicle->getRigidBody()->getMotionState()->getWorldTransform(boxTrans);
+
+	btVector3 relativeForce = btVector3(0, 400 * vehicle_red->info.mass, 0);
+	btVector3 relativePosition = btVector3(vehicle_red->info.chassis_size.x / -2, 0, 0);
+
+	btVector3 correctedForce = (boxTrans * relativeForce) - boxTrans.getOrigin();
+	btVector3 correctedPosition = (boxTrans * relativePosition) - boxTrans.getOrigin();
+
+	vehicle_red->vehicle->getRigidBody()->applyForce(correctedForce, correctedPosition);
+	}
+
+	*/
+
+	//NO SE LO QUE ES AIXO
+	if (App->input->GetJoystickButton(0, DPAD_RIGHT) == KEY_DOWN)
+	{
+		btVector3 gravity(10.0f, 0, 0);
+		vehicle_blue->vehicle->getRigidBody()->setGravity(gravity);
+	}
+
+	if (App->input->GetJoystickButton(0, DPAD_LEFT) == KEY_DOWN)
+	{
+		btVector3 gravity(-10.0f, 0, 0);
+		vehicle_blue->vehicle->getRigidBody()->setGravity(gravity);
+	}
+
+	if (App->input->GetJoystickButton(0, DPAD_UP) == KEY_DOWN)
+	{
+		btVector3 gravity(0, 10.0f, 0);
+		vehicle_blue->vehicle->getRigidBody()->setGravity(gravity);
+	}
+
+	if (App->input->GetJoystickButton(0, DPAD_DOWN) == KEY_DOWN)
+	{
+		btVector3 gravity(0, -10.0f, 0);
+		vehicle_blue->vehicle->getRigidBody()->setGravity(gravity);
+	}
+
+
+	vehicle_blue->ApplyEngineForce(acceleration);
+	vehicle_blue->Turn(turn);
+	vehicle_blue->Brake(brake);
+
+}
 
 void ModulePlayer::Turbo(PhysBody3D* body, bool brake)const
 {

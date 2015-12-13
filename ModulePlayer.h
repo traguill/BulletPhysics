@@ -2,6 +2,7 @@
 #include "Module.h"
 #include "Globals.h"
 #include "p2Point.h"
+#include "Timer.h"
 
 struct PhysVehicle3D;
 struct PhysBody3D;
@@ -42,6 +43,9 @@ private:
 	void InputPlayer1();
 	void InputPlayer2();
 
+	void KeyInputPlayer1();
+	void KeyInputPlayer2();
+
 	void Respawn();
 	
 	void Turbo(PhysBody3D* body, bool brake = false)const;
@@ -77,4 +81,6 @@ public:
 
 private:
 	int joysticks_connected = 0;
+	Timer match_time;
+	
 };
