@@ -10,9 +10,17 @@ struct PhysBody3D;
 #define TURN_DEGREES 15.0f * DEGTORAD
 #define BRAKE_POWER 1000.0f
 
+#define POWER_SPEED 10000
+
 struct BALL
 {
 	Sphere sphere;
+	PhysBody3D* body;
+};
+
+struct POWERUP
+{
+	Cube cube;
 	PhysBody3D* body;
 };
 
@@ -35,6 +43,8 @@ private:
 	void InputPlayer2();
 
 	void Respawn();
+	
+	void Turbo(PhysBody3D* body, bool brake = false)const;
 
 public:
 
@@ -52,6 +62,11 @@ public:
 	//GoalS
 	PhysBody3D*	goal_red = NULL;
 	PhysBody3D*	goal_blue = NULL;
+
+	//PowerUps
+	p2List<POWERUP> power_ups; //List of power ups just for render
+
+	POWERUP speed_A;
 
 	//Game-Logic
 	int score_red;

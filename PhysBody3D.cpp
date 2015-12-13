@@ -4,7 +4,9 @@
 
 // =================================================
 PhysBody3D::PhysBody3D(btRigidBody* body) : body(body)
-{}
+{
+	body->setUserPointer(this);
+}
 
 // ---------------------------------------------------------
 PhysBody3D::~PhysBody3D()
@@ -52,4 +54,16 @@ void PhysBody3D::Stop()
 	body->setLinearVelocity(btVector3(0, 0, 0));
 	body->setAngularVelocity(btVector3(0, 0, 0));
 	body->clearForces();
+}
+
+// ---------------------------------------------------------
+btTransform PhysBody3D::GetRealTransform()const
+{
+	return body->getWorldTransform();
+}
+
+//----------------------------------------------------------
+void PhysBody3D::ApplyCentralForce(btVector3& force)
+{
+	body->applyCentralForce(force);
 }
