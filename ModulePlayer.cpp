@@ -23,7 +23,7 @@ bool ModulePlayer::Start()
 	//Ball
 	ball.sphere.radius = 4;
 	ball.sphere.color = White;
-	ball.body = App->physics->AddBody(ball.sphere, 0.1f);
+	ball.body = App->physics->AddBody(ball.sphere, 0.01f);
 	ball.body->SetPos(0, 2, 0);
 	ball.body->collision_listeners.add(this);
 
@@ -37,6 +37,38 @@ bool ModulePlayer::Start()
 	b_red.SetPos(-169, 5.5f, 0);
 	goal_blue = App->physics->AddBody(b_red, 0, true);
 	goal_blue->collision_listeners.add(this);
+
+	//Power ups
+
+	Cube speed_up_c(30, 1, 10);
+	speed_up_c.color = Yellow;
+	speed_up_c.SetPos(20, 1, 92);
+
+	speed_A.cube = speed_up_c;
+	speed_A.body = App->physics->AddBody(speed_up_c, 0, true);
+	speed_A.body->collision_listeners.add(this);
+	power_ups.add(speed_A);
+
+	speed_up_c.SetPos(20, 1, -92);
+	speed_B.cube = speed_up_c;
+	speed_B.body = App->physics->AddBody(speed_up_c, 0, true);
+	speed_B.body->collision_listeners.add(this);
+	power_ups.add(speed_B);
+
+	Cube brake_c(20, 1, 20);
+	brake_c.color = Pink;
+	brake_c.SetPos(82, 1, -51);
+
+	brake_A.cube = brake_c;
+	brake_A.body = App->physics->AddBody(brake_c, 0, true);
+	brake_A.body->collision_listeners.add(this);
+	power_ups.add(brake_A);
+
+	brake_c.SetPos(-82, 1, 51);
+	brake_B.cube = brake_c;
+	brake_B.body = App->physics->AddBody(brake_c, 0, true);
+	brake_B.body->collision_listeners.add(this);
+	power_ups.add(brake_B);
 
 	//Cars
 	
@@ -124,10 +156,12 @@ bool ModulePlayer::Start()
 	vehicle_red = App->physics->AddVehicle(car);
 	vehicle_red->color = Red;
 	vehicle_red->SetPos(10, 3, 0);
+	vehicle_red->collision_listeners.add(this);
 
 	vehicle_blue = App->physics->AddVehicle(car);
 	vehicle_blue->color = Blue;
 	vehicle_blue->SetPos(-10, 3, 0);
+	vehicle_blue->collision_listeners.add(this);
 
 
 	joysticks_connected = App->input->GetNumberJoysticks();
@@ -160,6 +194,15 @@ update_status ModulePlayer::Update(float dt)
 	ball.body->GetTransform(ball.sphere.transform.M);
 	ball.sphere.Render();
 
+	p2List_item<POWERUP>* item = power_ups.getFirst();
+	while (item)
+	{
+		item->data.cube.Render();
+		item = item->next;
+	}
+
+
+
 	char title[80];
 	sprintf_s(title, "Rocket League Chinese version:   Blue %d - %d Red", score_blue, score_red);
 	App->window->SetTitle(title);
@@ -183,6 +226,8 @@ update_status ModulePlayer::PostUpdate(float dt)
 
 void ModulePlayer::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 {
+
+	//Goals
 	if (body1 == ball.body && body2 == goal_red)
 	{	
 		Respawn();
@@ -193,6 +238,19 @@ void ModulePlayer::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 	{
 		Respawn();
 		score_red += 1;
+	}
+	
+	//Power ups
+	if (body1 == speed_A.body || body1 == speed_B.body)
+	{
+		if (body2 != ball.body)
+			Turbo(body2);
+	}
+
+	if (body1 == brake_A.body || body1 == brake_B.body)
+	{
+		if (body2 != ball.body)
+			Turbo(body2, true);
 	}
 }
 
@@ -248,11 +306,12 @@ void ModulePlayer::InputPlayer1()
 	//Turbo
 	if (App->input->GetJoystickButton(0, A) == KEY_DOWN)
 	{
-		btVector3 relativeForce = btVector3(0, 0, 1000 * vehicle_red->info.mass);
+		/*btVector3 relativeForce = btVector3(0, 0, 1000 * vehicle_red->info.mass);
 		btTransform boxTrans;
 		vehicle_red->vehicle->getRigidBody()->getMotionState()->getWorldTransform(boxTrans);
 		btVector3 correctedForce = (boxTrans * relativeForce) - boxTrans.getOrigin();
-		vehicle_red->vehicle->getRigidBody()->applyCentralForce(correctedForce);
+		vehicle_red->vehicle->getRigidBody()->applyCentralForce(correctedForce);*/
+		Turbo(vehicle_red);
 	}
 
 
@@ -445,4 +504,17 @@ void ModulePlayer::InputPlayer2()
 	vehicle_blue->ApplyEngineForce(acceleration);
 	vehicle_blue->Turn(turn);
 	vehicle_blue->Brake(brake);
+}
+
+
+void ModulePlayer::Turbo(PhysBody3D* body, bool brake)const
+{
+	btVector3 relativeForce;
+	if (!brake)
+		relativeForce = btVector3(0, 0, POWER_SPEED);
+	else
+		relativeForce = btVector3(0, 0, -POWER_SPEED);
+	btTransform boxTrans = body->GetRealTransform();
+	btVector3 correctedForce = (boxTrans * relativeForce) - boxTrans.getOrigin();
+	body->ApplyCentralForce(correctedForce);
 }
