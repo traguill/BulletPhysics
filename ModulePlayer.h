@@ -10,6 +10,8 @@ struct PhysBody3D;
 #define TURN_DEGREES 15.0f * DEGTORAD
 #define BRAKE_POWER 1000.0f
 
+#define CAM_SPEED 5	
+
 struct BALL
 {
 	Sphere sphere;
@@ -24,10 +26,11 @@ public:
 
 	bool Start();
 	update_status Update(float dt);
-	update_status PostUpdate(float dt);
 	bool CleanUp();
 
 	void OnCollision(PhysBody3D* body1, PhysBody3D* body2);
+
+	p2List<p2Point<int>*>* InsideRect(p2List<p2Point<int>*> list, SDL_Rect rect);
 
 private:
 
@@ -35,6 +38,15 @@ private:
 	void InputPlayer2();
 
 	void Respawn();
+
+	//Moves the cam to always look at the two cars and the ball
+	void CameraFollow(float dt)const;
+
+	//Utilities---------------------------------------------------------------------------------------------
+	bool PointInRect(const int x,const int y,const SDL_Rect rect)const;
+
+	//From a list of points fill another with those that are inside the rect and returns the number
+	
 
 public:
 
@@ -56,6 +68,11 @@ public:
 	//Game-Logic
 	int score_red;
 	int score_blue;
+
+	//Cam utilities
+	SDL_Rect center_rec;
+	SDL_Rect center_right;
+	SDL_Rect center_left;
 
 private:
 	int joysticks_connected = 0;

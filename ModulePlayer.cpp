@@ -8,12 +8,28 @@
 ModulePlayer::ModulePlayer(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
 	turn = acceleration = brake = 0.0f;
+
+	//Center square to focus the objects
+	center_rec.x = SCREEN_WIDTH / 8;
+	center_rec.y = SCREEN_HEIGHT / 8;
+	center_rec.w = center_rec.x * 6;
+	center_rec.h = center_rec.y * 6;
+
+	//Rectangles to detect cam move in X axis
+	center_right.x = 0;
+	center_right.y = center_rec.y;
+	center_right.w = SCREEN_WIDTH / 8;
+	center_right.h = SCREEN_HEIGHT / 8;
+
+	center_left.x = (SCREEN_WIDTH / 8) * 7;
+	center_left.y = center_rec.y;
+	center_left.w = SCREEN_WIDTH / 8;
+	center_left.h = SCREEN_HEIGHT / 8;
 }
 
 ModulePlayer::~ModulePlayer()
 {}
 
-// Load assets
 bool ModulePlayer::Start()
 {
 	LOG("Loading player");
@@ -156,27 +172,15 @@ update_status ModulePlayer::Update(float dt)
 	//Render
 	vehicle_red->Render();
 	vehicle_blue->Render();
-
 	ball.body->GetTransform(ball.sphere.transform.M);
 	ball.sphere.Render();
+
+	//Update Cam
+	CameraFollow(dt);
 
 	char title[80];
 	sprintf_s(title, "Rocket League Chinese version:   Blue %d - %d Red", score_blue, score_red);
 	App->window->SetTitle(title);
-
-	return UPDATE_CONTINUE;
-}
-
-update_status ModulePlayer::PostUpdate(float dt)
-{
-	vec3 pos;
-	pos.x = vehicle_red->vehicle->getChassisWorldTransform().getOrigin().getX();
-	pos.y = vehicle_red->vehicle->getChassisWorldTransform().getOrigin().getY();
-	pos.z = vehicle_red->vehicle->getChassisWorldTransform().getOrigin().getZ();
-	App->camera->LookAt(pos);
-	pos.y += 10;
-	pos.z -= 38;
-	App->camera->Position = pos;
 
 	return UPDATE_CONTINUE;
 }
@@ -213,12 +217,12 @@ void ModulePlayer::InputPlayer1()
 	turn = acceleration = brake = 0.0f;
 
 	//Cam Control Debug for now
-	if (App->input->GetJoystickAxis(0, RIGHT_STICK_X) != 0 || App->input->GetJoystickAxis(0, RIGHT_STICK_Y) != 0)
+	/*if (App->input->GetJoystickAxis(0, RIGHT_STICK_X) != 0 || App->input->GetJoystickAxis(0, RIGHT_STICK_Y) != 0)
 	{
 		float dx = App->input->GetJoystickAxis(0, RIGHT_STICK_X);
 		float dy = App->input->GetJoystickAxis(0, RIGHT_STICK_Y);
 		App->camera->Rotate(dx * 10, dy * 10);
-	}
+	}*/
 
 	//Break
 	if (App->input->GetJoystickButton(0, X) == KEY_REPEAT)
@@ -445,4 +449,90 @@ void ModulePlayer::InputPlayer2()
 	vehicle_blue->ApplyEngineForce(acceleration);
 	vehicle_blue->Turn(turn);
 	vehicle_blue->Brake(brake);
+}
+
+
+void ModulePlayer::CameraFollow(float dt)const
+{
+	//Get Screen position of RedCar/BlueCar/Ball
+	p2Point<int>* red = new p2Point<int>();
+	btVector3 bt_red = vehicle_red->vehicle->getChassisWorldTransform().getOrigin();
+	vec3 red_3d(bt_red.getX(), bt_red.getY(), bt_red.getZ());
+	App->camera->From3Dto2D(red_3d, red->x, red->y);
+
+	p2Point<int>* blue = new p2Point<int>();
+	btVector3 bt_blue = vehicle_blue->vehicle->getChassisWorldTransform().getOrigin();
+	vec3 blue_3d(bt_blue.getX(), bt_blue.getY(), bt_blue.getZ());
+	App->camera->From3Dto2D(blue_3d, blue->x, blue->y);
+
+	p2Point<int>* ball_p = new p2Point<int>();
+	float m_ball[16];
+	ball.body->GetTransform(m_ball);
+	vec3 ball_3d(m_ball[12], m_ball[13], m_ball[14]);
+	App->camera->From3Dto2D(ball_3d, ball_p->x, ball_p->y);
+
+	p2List<p2Point<int>*> objects;
+	objects.add(red);
+	objects.add(blue);
+	objects.add(ball_p);
+
+	p2List<p2Point<int>*> results;
+
+	//Identify which rectangle are each object
+	InsideRect(results, objects, rect);
+	if (c < 3)
+	{
+		p2List<p2Point<int>*> result_left;
+		p2List<p2Point<int>*> result_right;
+		//Need to go right
+		/*if (InsideRect(result_left, results, center_left) > 0)
+		{
+			vec3 mov(CAM_SPEED*dt, 0, 0);
+			App->camera->Move(mov);
+		}
+		//Need to go left
+		if (InsideRect(result_right, results, center_right) > 0)
+		{
+			vec3 mov(-CAM_SPEED*dt, 0, 0);
+			App->camera->Move(mov);
+		}
+		//Need to zoom out
+		if (result_left.count() + result_right.count() < results.count())
+		{
+			vec3 mov (0, 0, CAM_SPEED*dt);
+			App->camera->Move(mov);
+		}*/
+	}
+
+
+}
+
+//Utilities ---------------------------------------------------------------------------------------------------------------------------------------------------
+
+bool ModulePlayer::PointInRect(const int x, const int y, const SDL_Rect rect)const
+{
+	bool ret = false;
+	if (x > rect.x && y > rect.y && x < rect.x + rect.w &&  y < rect.y + rect.h)
+		ret = true;
+	return ret;
+}
+
+p2List<p2Point<int>*>* ModulePlayer::InsideRect(p2List<p2Point<int>*> list, SDL_Rect rect)
+{
+	int ret = 0;
+	p2List_item<p2Point<int>*>*	item = list.getFirst();
+	while (item)
+	{
+		if (PointInRect(item->data->x, item->data->y, rect) == true)
+		{
+			p2Point<int>* p = new p2Point<int>();
+			p->x = item->data->x;
+			p->y = item->data->y;
+			result.add(p);
+		}
+			
+		item = item->next;
+	}
+	ret = result.count();
+	return ret;
 }
