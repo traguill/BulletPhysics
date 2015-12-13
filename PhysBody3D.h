@@ -20,6 +20,7 @@ public:
 	void SetTransform(const float* matrix) const;
 	void SetPos(float x, float y, float z);
 	void Stop();
+	void SetRotation(float x, float y, float z);
 
 	btTransform GetRealTransform()const;
 	void ApplyCentralForce(btVector3& force);

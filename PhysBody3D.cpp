@@ -48,6 +48,16 @@ void PhysBody3D::SetPos(float x, float y, float z)
 	body->setWorldTransform(t);
 }
 
+//----------------------------------------------------------
+void PhysBody3D::SetRotation(float x, float y, float z)
+{
+	btTransform t = body->getWorldTransform();
+	btQuaternion q;
+	q.setEulerZYX(z, y, x);
+	t.setRotation(q);
+	body->setWorldTransform(t);
+}
+
 // ---------------------------------------------------------
 void PhysBody3D::Stop()
 {

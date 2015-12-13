@@ -84,8 +84,8 @@ bool ModulePlayer::Start()
 	car.suspensionCompression = 0.83f;
 	car.suspensionDamping = 0.88f;
 	car.maxSuspensionTravelCm = 500.0f;
-	car.frictionSlip = 50.5;
-	car.maxSuspensionForce = 6000.0f;
+	car.frictionSlip = 5.5;
+	car.maxSuspensionForce = 10000.0f;
 
 	// Wheel properties ---------------------------------------
 	float connection_height = 1.2f;
@@ -155,14 +155,13 @@ bool ModulePlayer::Start()
 
 	vehicle_red = App->physics->AddVehicle(car);
 	vehicle_red->color = Red;
-	vehicle_red->SetPos(10, 3, 0);
 	vehicle_red->collision_listeners.add(this);
 
 	vehicle_blue = App->physics->AddVehicle(car);
 	vehicle_blue->color = Blue;
-	vehicle_blue->SetPos(-10, 3, 0);
 	vehicle_blue->collision_listeners.add(this);
 
+	Respawn();
 
 	joysticks_connected = App->input->GetNumberJoysticks();
 	
@@ -256,10 +255,16 @@ void ModulePlayer::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 
 void ModulePlayer::Respawn()
 {
-	vehicle_red->SetPos(0, 3, -10);
 	vehicle_red->Stop();
-	vehicle_blue->SetPos(0, 3, 10);
+	vehicle_red->SetPos(10, 3, 0);
+	vehicle_red->SetRotation(0, -3.14f / 2, 0);
+	
+
 	vehicle_blue->Stop();
+	vehicle_blue->SetPos(-10, 3, 0);
+	vehicle_blue->SetRotation(0, 3.14f / 2, 0);
+	
+
 	ball.body->SetPos(0, 2, 0);
 	ball.body->Stop();
 }
