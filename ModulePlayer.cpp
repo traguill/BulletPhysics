@@ -5,11 +5,18 @@
 #include "PhysVehicle3D.h"
 #include "PhysBody3D.h"
 
+
 ModulePlayer::ModulePlayer(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
 	turn = acceleration = brake = 0.0f;
 
 	//Center square to focus the objects
+	center_focus.x = (SCREEN_WIDTH / 9) * 3;
+	center_focus.y = (SCREEN_HEIGHT / 9) * 3;
+	center_focus.w = center_focus.x;
+	center_focus.h = center_focus.y;
+
+
 	center_rec.x = SCREEN_WIDTH / 8;
 	center_rec.y = SCREEN_HEIGHT / 8;
 	center_rec.w = center_rec.x * 6;
@@ -19,12 +26,12 @@ ModulePlayer::ModulePlayer(Application* app, bool start_enabled) : Module(app, s
 	center_right.x = 0;
 	center_right.y = center_rec.y;
 	center_right.w = SCREEN_WIDTH / 8;
-	center_right.h = SCREEN_HEIGHT / 8;
+	center_right.h = center_rec.h;
 
 	center_left.x = (SCREEN_WIDTH / 8) * 7;
 	center_left.y = center_rec.y;
 	center_left.w = SCREEN_WIDTH / 8;
-	center_left.h = SCREEN_HEIGHT / 8;
+	center_left.h = center_rec.h;
 }
 
 ModulePlayer::~ModulePlayer()
@@ -521,43 +528,44 @@ void ModulePlayer::InputPlayer2()
 void ModulePlayer::CameraFollow(float dt)const
 {
 	//Get Screen position of RedCar/BlueCar/Ball
-	p2Point<int>* red = new p2Point<int>();
+	p2Point<int> red;
 	btVector3 bt_red = vehicle_red->vehicle->getChassisWorldTransform().getOrigin();
 	vec3 red_3d(bt_red.getX(), bt_red.getY(), bt_red.getZ());
-	App->camera->From3Dto2D(red_3d, red->x, red->y);
+	App->camera->From3Dto2D(red_3d, red.x, red.y);
 
-	p2Point<int>* blue = new p2Point<int>();
+	p2Point<int> blue;
 	btVector3 bt_blue = vehicle_blue->vehicle->getChassisWorldTransform().getOrigin();
 	vec3 blue_3d(bt_blue.getX(), bt_blue.getY(), bt_blue.getZ());
-	App->camera->From3Dto2D(blue_3d, blue->x, blue->y);
+	App->camera->From3Dto2D(blue_3d, blue.x, blue.y);
 
-	p2Point<int>* ball_p = new p2Point<int>();
+	p2Point<int> ball_p;
 	float m_ball[16];
 	ball.body->GetTransform(m_ball);
 	vec3 ball_3d(m_ball[12], m_ball[13], m_ball[14]);
-	App->camera->From3Dto2D(ball_3d, ball_p->x, ball_p->y);
+	App->camera->From3Dto2D(ball_3d, ball_p.x, ball_p.y);
 
-	p2List<p2Point<int>*> objects;
+	p2List<p2Point<int>> objects;
 	objects.add(red);
 	objects.add(blue);
 	objects.add(ball_p);
 
-	p2List<p2Point<int>*> results;
+	p2List<p2Point<int>> results;
 
 	//Identify which rectangle are each object
-	InsideRect(results, objects, rect);
-	if (c < 3)
+	
+
+	if (InsideRect(&objects, &results, center_rec, false) != 0) //Check how many are out the main rectangle
 	{
-		p2List<p2Point<int>*> result_left;
-		p2List<p2Point<int>*> result_right;
-		//Need to go right
-		/*if (InsideRect(result_left, results, center_left) > 0)
+		p2List<p2Point<int>> result_left;
+		p2List<p2Point<int>> result_right;
+		//Need to go left
+		if (InsideRect(&results, &result_left, center_left) > 0)
 		{
 			vec3 mov(CAM_SPEED*dt, 0, 0);
 			App->camera->Move(mov);
 		}
-		//Need to go left
-		if (InsideRect(result_right, results, center_right) > 0)
+		//Need to go right
+		if (InsideRect(&results, &result_right, center_right) > 0)
 		{
 			vec3 mov(-CAM_SPEED*dt, 0, 0);
 			App->camera->Move(mov);
@@ -567,7 +575,7 @@ void ModulePlayer::CameraFollow(float dt)const
 		{
 			vec3 mov (0, 0, CAM_SPEED*dt);
 			App->camera->Move(mov);
-		}*/
+		}
 	}
 
 
@@ -583,25 +591,22 @@ bool ModulePlayer::PointInRect(const int x, const int y, const SDL_Rect rect)con
 	return ret;
 }
 
-p2List<p2Point<int>*>* ModulePlayer::InsideRect(p2List<p2Point<int>*> list, SDL_Rect rect)
+int ModulePlayer::InsideRect(p2List<p2Point<int>>* list, p2List<p2Point<int>>* result, SDL_Rect rect, bool inside)const
 {
-	int ret = 0;
-	p2List_item<p2Point<int>*>*	item = list.getFirst();
+	p2List_item<p2Point<int>>*	item = list->getFirst();
 	while (item)
 	{
-		if (PointInRect(item->data->x, item->data->y, rect) == true)
+		if (PointInRect(item->data.x, item->data.y, rect) == inside)
 		{
-			p2Point<int>* p = new p2Point<int>();
-			p->x = item->data->x;
-			p->y = item->data->y;
-			result.add(p);
+			p2Point<int> p(item->data);
+			result->add(p);
 		}
-			
+
 		item = item->next;
 	}
-	ret = result.count();
-	return ret;
 
+	return result->count();
+}
 void ModulePlayer::Turbo(PhysBody3D* body, bool brake)const
 {
 	btVector3 relativeForce;

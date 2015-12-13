@@ -5,13 +5,14 @@
 
 struct PhysVehicle3D;
 struct PhysBody3D;
+struct SDL_Rect;
 
 #define MAX_ACCELERATION 3000.0f
 #define TURN_DEGREES 15.0f * DEGTORAD
 #define BRAKE_POWER 1000.0f
 
 
-#define CAM_SPEED 5	
+#define CAM_SPEED 50
 
 #define POWER_SPEED 10000
 
@@ -40,8 +41,6 @@ public:
 
 	void OnCollision(PhysBody3D* body1, PhysBody3D* body2);
 
-	p2List<p2Point<int>*>* InsideRect(p2List<p2Point<int>*> list, SDL_Rect rect);
-
 private:
 
 	void InputPlayer1();
@@ -58,7 +57,7 @@ private:
 	bool PointInRect(const int x,const int y,const SDL_Rect rect)const;
 
 	//From a list of points fill another with those that are inside the rect and returns the number
-	
+	int InsideRect(p2List<p2Point<int>>* list, p2List<p2Point<int>>* result, SDL_Rect rect, bool inside = true)const;
 
 public:
 
@@ -90,6 +89,7 @@ public:
 	int score_blue;
 
 	//Cam utilities
+	SDL_Rect center_focus;
 	SDL_Rect center_rec;
 	SDL_Rect center_right;
 	SDL_Rect center_left;

@@ -201,12 +201,15 @@ void ModuleCamera3D::Rotate(float x, float y)
 
 void ModuleCamera3D::From3Dto2D(vec3 point, int& x, int& y)
 {
-	mat4x4 projection, view_projection;
-	glGetFloatv(GL_PROJECTION_MATRIX, projection.M);
+	mat4x4 projection;
+	projection = perspective(60.0f, (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.125f, 512.0f);
 
-	view_projection = projection * ViewMatrix;
-	vec3 screen = multiply(point, view_projection);
+	vec3 screen = multiply(point, ViewMatrix);
+	screen = multiply(screen, projection);
 
-	x = ((screen.x +1) / 2) * SCREEN_WIDTH;
-	y = ((1 - screen.y) / 2) * SCREEN_HEIGHT;
+	screen.x /= screen.z;
+	screen.y /= screen.z;
+
+	x = (screen.x +1) * (SCREEN_WIDTH / 2);
+	y = (screen.y + 1) * (SCREEN_HEIGHT/2);
 }
