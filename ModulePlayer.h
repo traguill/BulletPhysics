@@ -83,5 +83,6 @@ public:
 private:
 	int joysticks_connected = 0;
 	Timer match_time;
+	uint min;
 	
 };

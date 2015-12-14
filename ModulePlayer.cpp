@@ -8,6 +8,7 @@
 ModulePlayer::ModulePlayer(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
 	turn = acceleration = brake = 0.0f;
+	min = 0;
 }
 
 ModulePlayer::~ModulePlayer()
@@ -210,10 +211,16 @@ update_status ModulePlayer::Update(float dt)
 
 
 	char title[80];
-	sprintf_s(title, "Rocket League Chinese version:   Blue %d - %d Red", score_blue, score_red);
+	sprintf_s(title, "Rocket League Chinese version:   Blue %d - %d Red           %i : %i", score_blue, score_red, min, (int)match_time.ReadSec());
 	App->window->SetTitle(title);
+	
+	if ((int)match_time.ReadSec() == 60)
+	{
+		min++;
+		match_time.Start();
+	}
 
-	if (match_time.ReadSec() == 6.0f)
+	if (min==3)
 	{
 		Restart();
 	}
@@ -282,7 +289,8 @@ void ModulePlayer::Respawn()
 }
 
 void ModulePlayer::Restart()
-{
+{ 
+	score_blue = score_red = min= 0;
 	Respawn();
 	match_time.Start();
 }
