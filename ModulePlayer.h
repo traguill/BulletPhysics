@@ -47,6 +47,7 @@ private:
 	void KeyInputPlayer2();
 
 	void Respawn();
+	void Restart();
 	
 	void Turbo(PhysBody3D* body, bool brake = false)const;
 
