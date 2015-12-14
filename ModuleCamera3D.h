@@ -3,6 +3,14 @@
 #include "Globals.h"
 #include "glmath.h"
 
+enum Direction
+{
+	GO_RIGHT,
+	GO_LEFT,
+	GO_UP,
+	GO_DOWN
+};
+
 class ModuleCamera3D : public Module
 {
 public:
@@ -16,6 +24,7 @@ public:
 	void Look(const vec3 &Position, const vec3 &Reference, bool RotateAroundReference = false);
 	void LookAt(const vec3 &Spot);
 	void Move(const vec3 &Movement);
+	void Move(Direction d, float speed);
 	float* GetViewMatrix();
 
 	void Rotate(float x, float y);

@@ -12,7 +12,7 @@ struct SDL_Rect;
 #define BRAKE_POWER 1000.0f
 
 
-#define CAM_SPEED 15
+#define CAM_SPEED 3
 
 #define POWER_SPEED 10000
 
@@ -53,6 +53,7 @@ private:
 
 	//Moves the cam to always look at the two cars and the ball
 	void CameraFollow(float dt)const;
+	void CameraFollow2(float dt)const;
 
 	//Utilities---------------------------------------------------------------------------------------------
 	bool PointInRect(const int x,const int y,const SDL_Rect rect)const;
@@ -97,4 +98,9 @@ public:
 
 private:
 	int joysticks_connected = 0;
+
+	//Utilities
+	p2Point<int> center_screen;
+
+	int area_focus_screen;
 };

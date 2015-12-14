@@ -149,6 +149,33 @@ void ModuleCamera3D::Move(const vec3 &Movement)
 	CalculateViewMatrix();
 }
 
+void ModuleCamera3D::Move(Direction d, float speed)
+{
+	vec3 newPos(0, 0, 0);
+	switch (d)
+	{
+	case GO_RIGHT:
+		newPos += X * speed;
+		break;
+	case GO_LEFT:
+		newPos -= X * speed;
+		break;
+	case GO_UP:
+		newPos.y += speed;
+		break;
+	case GO_DOWN:
+		newPos.y -= speed;
+		break;
+	default:
+		break;
+	}
+
+	Position += newPos;
+	Reference += newPos;
+
+	CalculateViewMatrix();
+}
+
 // -----------------------------------------------------------------
 float* ModuleCamera3D::GetViewMatrix()
 {

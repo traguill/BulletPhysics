@@ -8,7 +8,13 @@
 
 ModulePlayer::ModulePlayer(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
+	
 	turn = acceleration = brake = 0.0f;
+
+	center_screen.x = SCREEN_WIDTH / 2;
+	center_screen.y = SCREEN_HEIGHT / 2;
+
+	area_focus_screen = (SCREEN_WIDTH*SCREEN_HEIGHT) / 3;
 
 	//Center square to focus the objects
 	center_focus.x = (SCREEN_WIDTH / 9) * 3;
@@ -201,7 +207,7 @@ bool ModulePlayer::CleanUp()
 
 update_status ModulePlayer::PreUpdate(float dt)
 {
-	CameraFollow(dt);
+	CameraFollow2(dt);
 
 	return UPDATE_CONTINUE;
 }
@@ -583,6 +589,70 @@ void ModulePlayer::CameraFollow(float dt)const
 	}
 
 
+}
+
+void ModulePlayer::CameraFollow2(float dt)const
+{
+	//Calculate center point of the triangle
+	p2Point<int> red;
+	btVector3 bt_red = vehicle_red->vehicle->getChassisWorldTransform().getOrigin();
+	vec3 red_3d(bt_red.getX(), bt_red.getY(), bt_red.getZ());
+	App->camera->From3Dto2D(red_3d, red.x, red.y);
+
+	p2Point<int> blue;
+	btVector3 bt_blue = vehicle_blue->vehicle->getChassisWorldTransform().getOrigin();
+	vec3 blue_3d(bt_blue.getX(), bt_blue.getY(), bt_blue.getZ());
+	App->camera->From3Dto2D(blue_3d, blue.x, blue.y);
+
+	p2Point<int> ball_p;
+	float m_ball[16];
+	ball.body->GetTransform(m_ball);
+	vec3 ball_3d(m_ball[12], m_ball[13], m_ball[14]);
+	App->camera->From3Dto2D(ball_3d, ball_p.x, ball_p.y);
+
+	p2Point<int> center_triangle; //Center point of the triangle made with the previous points
+	center_triangle.x = (red.x + blue.x + ball_p.x) / 3;
+	center_triangle.y = (red.y + blue.y + ball_p.y) / 3;
+
+	//Calculate the direction that the camera has to take
+	if (center_triangle.x > center_screen.x)
+	{
+		App->camera->Move(GO_RIGHT, CAM_SPEED*dt);
+	}
+	else
+	{
+		App->camera->Move(GO_LEFT, CAM_SPEED*dt);
+	}
+
+	if (center_triangle.y > center_screen.y)
+	{
+		App->camera->Move(GO_UP, CAM_SPEED*dt);
+	}
+	else
+	{
+		App->camera->Move(GO_DOWN, CAM_SPEED*dt);
+	}
+
+	//Calculate the rectangle
+
+	int base = red.DistanceTo(blue);
+	float a = ((base / 2)*(base / 2)) - (blue.DistanceTo(ball_p) * blue.DistanceTo(ball_p));
+	int h = sqrt(a);
+	int area_objects = base * h;
+
+	if (area_objects > area_focus_screen)
+	{
+		vec3 mov(0, 0, CAM_SPEED*3*dt);
+		App->camera->Move(mov);
+	}
+	else
+	{
+		vec3 mov(0, 0, -CAM_SPEED*dt);
+		App->camera->Move(mov);
+	}
+
+
+	//Zoom the camera to fill the rectangle
 }
 
 //Utilities ---------------------------------------------------------------------------------------------------------------------------------------------------
