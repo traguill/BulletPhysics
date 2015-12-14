@@ -199,6 +199,13 @@ bool ModulePlayer::CleanUp()
 	return true;
 }
 
+update_status ModulePlayer::PreUpdate(float dt)
+{
+	CameraFollow(dt);
+
+	return UPDATE_CONTINUE;
+}
+
 // Update: draw background
 update_status ModulePlayer::Update(float dt)
 {	
@@ -215,9 +222,6 @@ update_status ModulePlayer::Update(float dt)
 	ball.body->GetTransform(ball.sphere.transform.M);
 	ball.sphere.Render();
 
-
-	//Update Cam
-	CameraFollow(dt);
 
 	p2List_item<POWERUP>* item = power_ups.getFirst();
 	while (item)

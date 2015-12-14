@@ -12,7 +12,7 @@ struct SDL_Rect;
 #define BRAKE_POWER 1000.0f
 
 
-#define CAM_SPEED 50
+#define CAM_SPEED 15
 
 #define POWER_SPEED 10000
 
@@ -36,6 +36,7 @@ public:
 	virtual ~ModulePlayer();
 
 	bool Start();
+	update_status PreUpdate(float dt);
 	update_status Update(float dt);
 	bool CleanUp();
 
