@@ -4,12 +4,14 @@
 #include "Primitive.h"
 #include "PhysVehicle3D.h"
 #include "PhysBody3D.h"
+#include "ModuleCamera3D.h"
 
 
 ModulePlayer::ModulePlayer(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
 	
 	turn = acceleration = brake = 0.0f;
+	min = 0;
 }
 
 ModulePlayer::~ModulePlayer()
@@ -26,6 +28,11 @@ bool ModulePlayer::Start()
 	ball.sphere.color = White;
 	ball.body = App->physics->AddBody(ball.sphere, 0.01f);
 	ball.body->SetPos(0, 2, 0);
+	ball.shadow.radius = 3;
+	ball.shadow.height = 0.5f;
+	ball.shadow.color = Black;
+	ball.shadow.SetRotation(90, vec3(0, 0, 1));
+	ball.shadow.SetPos(ball.sphere.GetPos().x, 1, ball.sphere.GetPos().z);
 	ball.body->collision_listeners.add(this);
 
 	//Goals
@@ -164,10 +171,14 @@ bool ModulePlayer::Start()
 
 	Respawn();
 
+	match_time.Start();
+
 	joysticks_connected = App->input->GetNumberJoysticks();
+
 
 	App->camera->Move(vec3(0, 50, -100));
 	App->camera->LookAt(vec3(0, 0, 0));
+
 	
 	return true;
 }
@@ -220,15 +231,29 @@ update_status ModulePlayer::Update(float dt)
 {	
 
 	//Get input
+	//Joystikcks_input
 	if (joysticks_connected > 0)
 		InputPlayer1();
+	else
+		KeyInputPlayer1();
 	if (joysticks_connected > 1)
 		InputPlayer2();
+	else
+		KeyInputPlayer2();
+
+	
+	
+
+
 	//Render
 	vehicle_red->Render();
 	vehicle_blue->Render();
 	ball.body->GetTransform(ball.sphere.transform.M);
 	ball.sphere.Render();
+
+	ball.shadow.radius = 1 / (ball.sphere.GetPos().y - 5);
+	ball.shadow.SetPos(ball.sphere.GetPos().x, 1, ball.sphere.GetPos().z);
+	ball.shadow.Render();
 
 
 	p2List_item<POWERUP>* item = power_ups.getFirst();
@@ -238,11 +263,27 @@ update_status ModulePlayer::Update(float dt)
 		item = item->next;
 	}
 
+
+
+	if ((int)match_time.ReadSec() == 60)
+	{
+		min++;
+		match_time.Start();
+	}
+
+	if (min == 3)
+	{
+		Restart();
+	}
+
 	Test();
 
+
 	char title[80];
-	sprintf_s(title, "Rocket League Chinese version:   Blue %d - %d Red", score_blue, score_red);
+	sprintf_s(title, "Rocket League Chinese version:   Blue %d - %d Red          Time: %i : %i", score_blue, score_red, min, (int)match_time.ReadSec());
 	App->window->SetTitle(title);
+	
+	
 
 	return UPDATE_CONTINUE;
 }
@@ -293,6 +334,12 @@ void ModulePlayer::Respawn()
 	ball.body->Stop();
 }
 
+void ModulePlayer::Restart()
+{ 
+	score_blue = score_red = min= 0;
+	Respawn();
+	match_time.Start();
+}
 
 void ModulePlayer::InputPlayer1()
 {
@@ -536,6 +583,210 @@ void ModulePlayer::InputPlayer2()
 	vehicle_blue->Brake(brake);
 }
 
+void ModulePlayer::KeyInputPlayer1()
+{
+	turn = acceleration = brake = 0.0f;
+	
+	//Not for computer
+	//Cam Control Debug for now
+	/*if (App->input->GetJoystickAxis(0, RIGHT_STICK_X) != 0 || App->input->GetJoystickAxis(0, RIGHT_STICK_Y) != 0)
+	{
+		float dx = App->input->GetJoystickAxis(0, RIGHT_STICK_X);
+		float dy = App->input->GetJoystickAxis(0, RIGHT_STICK_Y);
+		App->camera->Rotate(dx * 10, dy * 10);
+	}*/
+
+	//Break
+	if (App->input->GetKey(SDL_SCANCODE_E) == KEY_REPEAT)
+	{
+		brake = BRAKE_POWER;
+	}
+
+	//Direction
+	if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
+	{
+		turn = +TURN_DEGREES;
+	}
+	if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
+	{
+		turn = -TURN_DEGREES;
+	}
+
+	//Go forward
+	if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT)
+	{
+		acceleration = MAX_ACCELERATION;
+	}
+
+	//Go backward
+	if (App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT)
+	{
+		acceleration = -MAX_ACCELERATION;
+	}
+
+
+	//Turbo
+	if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_REPEAT)
+	{
+		/*btVector3 relativeForce = btVector3(0, 0, 1000 * vehicle_red->info.mass);
+		btTransform boxTrans;
+		vehicle_red->vehicle->getRigidBody()->getMotionState()->getWorldTransform(boxTrans);
+		btVector3 correctedForce = (boxTrans * relativeForce) - boxTrans.getOrigin();
+		vehicle_red->vehicle->getRigidBody()->applyCentralForce(correctedForce);*/
+		Turbo(vehicle_red);
+	}
+	
+	//FrontFlip
+	if (App->input->GetKey(SDL_SCANCODE_J) == KEY_DOWN)
+	{
+		btVector3 relativeForce = btVector3(0, 485 * vehicle_red->info.mass, 0);
+		btVector3 relativePosition = btVector3(0, 0, -vehicle_red->info.chassis_size.z / 2);
+
+		btTransform boxTrans;
+		vehicle_red->vehicle->getRigidBody()->getMotionState()->getWorldTransform(boxTrans);
+		btVector3 correctedForce = (boxTrans * relativeForce) - boxTrans.getOrigin();
+		btVector3 correctedPosition = (boxTrans * relativePosition) - boxTrans.getOrigin();
+
+		vehicle_red->vehicle->getRigidBody()->applyForce(correctedForce, correctedPosition);
+	}
+
+	//Roll (right)
+	if (App->input->GetKey(SDL_SCANCODE_L) == KEY_DOWN)
+	{
+		btTransform boxTrans;
+		vehicle_red->vehicle->getRigidBody()->getMotionState()->getWorldTransform(boxTrans);
+
+		btVector3 relativeForce = btVector3(0, 400 * vehicle_red->info.mass, 0);
+		btVector3 relativePosition = btVector3(vehicle_red->info.chassis_size.x / 2, 0, 0);
+
+		btVector3 correctedForce = (boxTrans * relativeForce) - boxTrans.getOrigin();
+		btVector3 correctedPosition = (boxTrans * relativePosition) - boxTrans.getOrigin();
+
+		vehicle_red->vehicle->getRigidBody()->applyForce(correctedForce, correctedPosition);
+	}
+
+	//Roll (left)
+	if (App->input->GetKey(SDL_SCANCODE_K) == KEY_DOWN)
+	{
+		btTransform boxTrans;
+		vehicle_red->vehicle->getRigidBody()->getMotionState()->getWorldTransform(boxTrans);
+
+		btVector3 relativeForce = btVector3(0, 400 * vehicle_red->info.mass, 0);
+		btVector3 relativePosition = btVector3(vehicle_red->info.chassis_size.x / -2, 0, 0);
+
+		btVector3 correctedForce = (boxTrans * relativeForce) - boxTrans.getOrigin();
+		btVector3 correctedPosition = (boxTrans * relativePosition) - boxTrans.getOrigin();
+
+		vehicle_red->vehicle->getRigidBody()->applyForce(correctedForce, correctedPosition);
+	}
+
+	vehicle_red->ApplyEngineForce(acceleration);
+	vehicle_red->Turn(turn);
+	vehicle_red->Brake(brake);
+}
+void ModulePlayer::KeyInputPlayer2()
+{
+	turn = acceleration = brake = 0.0f;
+
+	//Not for computer
+	//Cam Control Debug for now
+	/*if (App->input->GetJoystickAxis(0, RIGHT_STICK_X) != 0 || App->input->GetJoystickAxis(0, RIGHT_STICK_Y) != 0)
+	{
+	float dx = App->input->GetJoystickAxis(0, RIGHT_STICK_X);
+	float dy = App->input->GetJoystickAxis(0, RIGHT_STICK_Y);
+	App->camera->Rotate(dx * 10, dy * 10);
+	}*/
+
+	//Break
+	if (App->input->GetKey(SDL_SCANCODE_KP_0) == KEY_REPEAT)
+	{
+		brake = BRAKE_POWER;
+	}
+
+	//Direction
+	if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
+	{
+		turn = +TURN_DEGREES;
+	}
+	if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
+	{
+		turn = -TURN_DEGREES;
+	}
+
+
+	//Go forward
+	if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
+	{
+		acceleration = MAX_ACCELERATION;
+	}
+
+	//Go backward
+	if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
+	{
+		acceleration = -MAX_ACCELERATION;
+	}
+
+
+	//Turbo
+	if (App->input->GetKey(SDL_SCANCODE_KP_1) == KEY_REPEAT)
+	{
+		/*btVector3 relativeForce = btVector3(0, 0, 1000 * vehicle_red->info.mass);
+		btTransform boxTrans;
+		vehicle_red->vehicle->getRigidBody()->getMotionState()->getWorldTransform(boxTrans);
+		btVector3 correctedForce = (boxTrans * relativeForce) - boxTrans.getOrigin();
+		vehicle_red->vehicle->getRigidBody()->applyCentralForce(correctedForce);*/
+		Turbo(vehicle_blue);
+	}
+	
+	//FrontFlip
+	if (App->input->GetKey(SDL_SCANCODE_KP_5) == KEY_DOWN)
+	{
+		btVector3 relativeForce = btVector3(0, 485 * vehicle_blue->info.mass, 0);
+		btVector3 relativePosition = btVector3(0, 0, -vehicle_blue->info.chassis_size.z / 2);
+
+	btTransform boxTrans;
+	vehicle_blue->vehicle->getRigidBody()->getMotionState()->getWorldTransform(boxTrans);
+	btVector3 correctedForce = (boxTrans * relativeForce) - boxTrans.getOrigin();
+	btVector3 correctedPosition = (boxTrans * relativePosition) - boxTrans.getOrigin();
+
+	vehicle_blue->vehicle->getRigidBody()->applyForce(correctedForce, correctedPosition);
+	}
+
+	//Roll (right)
+	if (App->input->GetKey(SDL_SCANCODE_KP_6) == KEY_DOWN)
+	{
+	btTransform boxTrans;
+	vehicle_blue->vehicle->getRigidBody()->getMotionState()->getWorldTransform(boxTrans);
+
+	btVector3 relativeForce = btVector3(0, 400 * vehicle_blue->info.mass, 0);
+	btVector3 relativePosition = btVector3(vehicle_blue->info.chassis_size.x / 2, 0, 0);
+
+	btVector3 correctedForce = (boxTrans * relativeForce) - boxTrans.getOrigin();
+	btVector3 correctedPosition = (boxTrans * relativePosition) - boxTrans.getOrigin();
+
+	vehicle_blue->vehicle->getRigidBody()->applyForce(correctedForce, correctedPosition);
+	}
+
+	//Roll (left)
+	if (App->input->GetKey(SDL_SCANCODE_KP_4) == KEY_DOWN)
+	{
+	btTransform boxTrans;
+	vehicle_blue->vehicle->getRigidBody()->getMotionState()->getWorldTransform(boxTrans);
+
+	btVector3 relativeForce = btVector3(0, 400 * vehicle_blue->info.mass, 0);
+	btVector3 relativePosition = btVector3(vehicle_blue->info.chassis_size.x / -2, 0, 0);
+
+	btVector3 correctedForce = (boxTrans * relativeForce) - boxTrans.getOrigin();
+	btVector3 correctedPosition = (boxTrans * relativePosition) - boxTrans.getOrigin();
+
+	vehicle_blue->vehicle->getRigidBody()->applyForce(correctedForce, correctedPosition);
+	}
+
+	vehicle_blue->ApplyEngineForce(acceleration);
+	vehicle_blue->Turn(turn);
+	vehicle_blue->Brake(brake);
+
+}
 
 
 
