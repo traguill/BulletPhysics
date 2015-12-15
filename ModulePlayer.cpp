@@ -10,34 +10,6 @@ ModulePlayer::ModulePlayer(Application* app, bool start_enabled) : Module(app, s
 {
 	
 	turn = acceleration = brake = 0.0f;
-
-	center_screen.x = SCREEN_WIDTH / 2;
-	center_screen.y = SCREEN_HEIGHT / 2;
-
-	area_focus_screen = (SCREEN_WIDTH*SCREEN_HEIGHT) / 3;
-
-	//Center square to focus the objects
-	center_focus.x = (SCREEN_WIDTH / 9) * 3;
-	center_focus.y = (SCREEN_HEIGHT / 9) * 3;
-	center_focus.w = center_focus.x;
-	center_focus.h = center_focus.y;
-
-
-	center_rec.x = SCREEN_WIDTH / 8;
-	center_rec.y = SCREEN_HEIGHT / 8;
-	center_rec.w = center_rec.x * 6;
-	center_rec.h = center_rec.y * 6;
-
-	//Rectangles to detect cam move in X axis
-	center_right.x = 0;
-	center_right.y = center_rec.y;
-	center_right.w = SCREEN_WIDTH / 8;
-	center_right.h = center_rec.h;
-
-	center_left.x = (SCREEN_WIDTH / 8) * 7;
-	center_left.y = center_rec.y;
-	center_left.w = SCREEN_WIDTH / 8;
-	center_left.h = center_rec.h;
 }
 
 ModulePlayer::~ModulePlayer()
@@ -193,6 +165,9 @@ bool ModulePlayer::Start()
 	Respawn();
 
 	joysticks_connected = App->input->GetNumberJoysticks();
+
+	App->camera->Move(vec3(0, 100, -100));
+	App->camera->LookAt(vec3(0, 0, 0));
 	
 	return true;
 }
@@ -207,9 +182,37 @@ bool ModulePlayer::CleanUp()
 
 update_status ModulePlayer::PreUpdate(float dt)
 {
-	CameraFollow2(dt);
+	
 
 	return UPDATE_CONTINUE;
+}
+
+void ModulePlayer::Test()
+{
+	//Call the camera follow thing
+	p2Point<int> red;
+	btVector3 bt_red = vehicle_red->vehicle->getChassisWorldTransform().getOrigin();
+	vec3 red_3d(bt_red.getX(), bt_red.getY(), bt_red.getZ());
+	App->camera->From3Dto2D(red_3d, red.x, red.y);
+
+	p2Point<int> blue;
+	btVector3 bt_blue = vehicle_blue->vehicle->getChassisWorldTransform().getOrigin();
+	vec3 blue_3d(bt_blue.getX(), bt_blue.getY(), bt_blue.getZ());
+	App->camera->From3Dto2D(blue_3d, blue.x, blue.y);
+
+	p2Point<int> ball_p;
+	float m_ball[16];
+	ball.body->GetTransform(m_ball);
+	vec3 ball_3d(m_ball[12], m_ball[13], m_ball[14]);
+	App->camera->From3Dto2D(ball_3d, ball_p.x, ball_p.y);
+
+	p2List<p2Point<int>> objects;
+	objects.add(red);
+	objects.add(blue);
+	objects.add(ball_p);
+
+	//Call the camera method to follow multiple objects
+	App->camera->FollowMultipleTargets(&objects);
 }
 
 // Update: draw background
@@ -236,7 +239,7 @@ update_status ModulePlayer::Update(float dt)
 		item = item->next;
 	}
 
-
+	Test();
 
 	char title[80];
 	sprintf_s(title, "Rocket League Chinese version:   Blue %d - %d Red", score_blue, score_red);
@@ -308,7 +311,8 @@ void ModulePlayer::InputPlayer1()
 	//Break
 	if (App->input->GetJoystickButton(0, X) == KEY_REPEAT)
 	{
-		brake = BRAKE_POWER;
+		//brake = BRAKE_POWER;
+		Test();
 	}
 
 	//Direction
@@ -535,125 +539,6 @@ void ModulePlayer::InputPlayer2()
 
 
 
-void ModulePlayer::CameraFollow(float dt)const
-{
-	//Get Screen position of RedCar/BlueCar/Ball
-	p2Point<int> red;
-	btVector3 bt_red = vehicle_red->vehicle->getChassisWorldTransform().getOrigin();
-	vec3 red_3d(bt_red.getX(), bt_red.getY(), bt_red.getZ());
-	App->camera->From3Dto2D(red_3d, red.x, red.y);
-
-	p2Point<int> blue;
-	btVector3 bt_blue = vehicle_blue->vehicle->getChassisWorldTransform().getOrigin();
-	vec3 blue_3d(bt_blue.getX(), bt_blue.getY(), bt_blue.getZ());
-	App->camera->From3Dto2D(blue_3d, blue.x, blue.y);
-
-	p2Point<int> ball_p;
-	float m_ball[16];
-	ball.body->GetTransform(m_ball);
-	vec3 ball_3d(m_ball[12], m_ball[13], m_ball[14]);
-	App->camera->From3Dto2D(ball_3d, ball_p.x, ball_p.y);
-
-	p2List<p2Point<int>> objects;
-	objects.add(red);
-	objects.add(blue);
-	objects.add(ball_p);
-
-	p2List<p2Point<int>> results;
-
-	//Identify which rectangle are each object
-	
-
-	if (InsideRect(&objects, &results, center_rec, false) != 0) //Check how many are out the main rectangle
-	{
-		p2List<p2Point<int>> result_left;
-		p2List<p2Point<int>> result_right;
-		//Need to go left
-		if (InsideRect(&results, &result_left, center_left) > 0)
-		{
-			vec3 mov(CAM_SPEED*dt, 0, 0);
-			App->camera->Move(mov);
-		}
-		//Need to go right
-		if (InsideRect(&results, &result_right, center_right) > 0)
-		{
-			vec3 mov(-CAM_SPEED*dt, 0, 0);
-			App->camera->Move(mov);
-		}
-		//Need to zoom out
-		if (result_left.count() + result_right.count() < results.count())
-		{
-			vec3 mov (0, 0, CAM_SPEED*dt);
-			App->camera->Move(mov);
-		}
-	}
-
-
-}
-
-void ModulePlayer::CameraFollow2(float dt)const
-{
-	//Calculate center point of the triangle
-	p2Point<int> red;
-	btVector3 bt_red = vehicle_red->vehicle->getChassisWorldTransform().getOrigin();
-	vec3 red_3d(bt_red.getX(), bt_red.getY(), bt_red.getZ());
-	App->camera->From3Dto2D(red_3d, red.x, red.y);
-
-	p2Point<int> blue;
-	btVector3 bt_blue = vehicle_blue->vehicle->getChassisWorldTransform().getOrigin();
-	vec3 blue_3d(bt_blue.getX(), bt_blue.getY(), bt_blue.getZ());
-	App->camera->From3Dto2D(blue_3d, blue.x, blue.y);
-
-	p2Point<int> ball_p;
-	float m_ball[16];
-	ball.body->GetTransform(m_ball);
-	vec3 ball_3d(m_ball[12], m_ball[13], m_ball[14]);
-	App->camera->From3Dto2D(ball_3d, ball_p.x, ball_p.y);
-
-	p2Point<int> center_triangle; //Center point of the triangle made with the previous points
-	center_triangle.x = (red.x + blue.x + ball_p.x) / 3;
-	center_triangle.y = (red.y + blue.y + ball_p.y) / 3;
-
-	//Calculate the direction that the camera has to take
-	if (center_triangle.x > center_screen.x)
-	{
-		App->camera->Move(GO_RIGHT, CAM_SPEED*dt);
-	}
-	else
-	{
-		App->camera->Move(GO_LEFT, CAM_SPEED*dt);
-	}
-
-	if (center_triangle.y > center_screen.y)
-	{
-		App->camera->Move(GO_UP, CAM_SPEED*dt);
-	}
-	else
-	{
-		App->camera->Move(GO_DOWN, CAM_SPEED*dt);
-	}
-
-	//Calculate the rectangle
-
-	int base = red.DistanceTo(blue);
-	float a = ((base / 2)*(base / 2)) - (blue.DistanceTo(ball_p) * blue.DistanceTo(ball_p));
-	int h = sqrt(a);
-	int area_objects = base * h;
-
-	if (area_objects > area_focus_screen)
-	{
-		vec3 mov(0, 0, CAM_SPEED*3*dt);
-		App->camera->Move(mov);
-	}
-	else
-	{
-		vec3 mov(0, 0, -CAM_SPEED*dt);
-		App->camera->Move(mov);
-	}
-
-
-	//Zoom the camera to fill the rectangle
-}
 
 //Utilities ---------------------------------------------------------------------------------------------------------------------------------------------------
 
