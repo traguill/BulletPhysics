@@ -60,7 +60,11 @@ update_status ModulePlayer::Update(float dt)
 
 	//Render
 	vehicle_red->Render();
+	shadow_red.SetPos(vehicle_red->GetPos().x, 0.1, vehicle_red->GetPos().z);
+	shadow_red.Render();
 	vehicle_blue->Render();
+	shadow_blue.SetPos(vehicle_blue->GetPos().x, 0.1, vehicle_blue->GetPos().z);
+	shadow_blue.Render();
 
 	ball.body->GetTransform(ball.sphere.transform.M);
 	ball.sphere.Render();
@@ -319,6 +323,18 @@ void ModulePlayer::CreateObjects()
 	vehicle_blue = App->physics->AddVehicle(car);
 	vehicle_blue->color = Blue;
 	vehicle_blue->collision_listeners.add(this);
+
+	shadow_red.color = Red;
+	shadow_blue.color = Blue;
+
+	shadow_red.height = shadow_blue.height = 1;
+	shadow_red.radius = shadow_blue.radius = 3;
+
+	shadow_red.SetPos(vehicle_red->GetPos().x, 1, vehicle_red->GetPos().z);
+	shadow_blue.SetPos(vehicle_blue->GetPos().x, 1, vehicle_blue->GetPos().z);
+
+	shadow_red.SetRotation(90, vec3(0, 0, 1));
+	shadow_blue.SetRotation(90, vec3(0, 0, 1));
 }
 
 void ModulePlayer::InputPlayer1()

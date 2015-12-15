@@ -67,8 +67,10 @@ private:
 public:
 
 	//Players
-	PhysVehicle3D* vehicle_red = NULL;
-	PhysVehicle3D* vehicle_blue = NULL;
+	PhysVehicle3D*		vehicle_red = NULL;
+	Cylinder				shadow_red;
+	PhysVehicle3D*		vehicle_blue = NULL;
+	Cylinder				shadow_blue;
 
 	float turn;
 	float acceleration;
