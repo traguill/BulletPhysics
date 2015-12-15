@@ -12,9 +12,6 @@ struct SDL_Rect;
 #define TURN_DEGREES 15.0f * DEGTORAD
 #define BRAKE_POWER 1000.0f
 
-
-#define CAM_SPEED 3
-
 #define POWER_SPEED 10000
 
 
@@ -38,13 +35,14 @@ public:
 	virtual ~ModulePlayer();
 
 	bool Start();
-	update_status PreUpdate(float dt);
 	update_status Update(float dt);
 	bool CleanUp();
 
 	void OnCollision(PhysBody3D* body1, PhysBody3D* body2);
 
 private:
+
+	void CreateObjects();
 
 	void InputPlayer1();
 	void InputPlayer2();
@@ -64,13 +62,15 @@ private:
 	int InsideRect(p2List<p2Point<int>>* list, p2List<p2Point<int>>* result, SDL_Rect rect, bool inside = true)const;
 
 
-	void Test();
+	void UpdateCamera()const;
 
 public:
 
 	//Players
-	PhysVehicle3D* vehicle_red = NULL;
-	PhysVehicle3D* vehicle_blue = NULL;
+	PhysVehicle3D*		vehicle_red = NULL;
+	Cylinder				shadow_red;
+	PhysVehicle3D*		vehicle_blue = NULL;
+	Cylinder				shadow_blue;
 
 	float turn;
 	float acceleration;

@@ -42,14 +42,13 @@ bool ModuleCamera3D::CleanUp()
 // -----------------------------------------------------------------
 update_status ModuleCamera3D::Update(float dt)
 {
-	// Implement a debug camera with keys and mouse
-	// Now we can make this movememnt frame rate independant!
+	// Debug camera mode: Disabled for the final game (but better keep the code)
 
-	vec3 newPos(0,0,0);
+	/*vec3 newPos(0,0,0);
 	float speed = 3.0f * dt;
 	if(App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT)
 		speed = 8.0f * dt;
-	/*
+	
 	if(App->input->GetKey(SDL_SCANCODE_R) == KEY_REPEAT) newPos.y += speed;
 	if(App->input->GetKey(SDL_SCANCODE_F) == KEY_REPEAT) newPos.y -= speed;
 
@@ -59,7 +58,7 @@ update_status ModuleCamera3D::Update(float dt)
 
 	if(App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) newPos -= X * speed;
 	if(App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) newPos += X * speed;
-	*/
+	
 	Position += newPos;
 	Reference += newPos;
 
@@ -100,10 +99,8 @@ update_status ModuleCamera3D::Update(float dt)
 		Position = Reference + Z * length(Position);
 	}
 
-
-
 	// Recalculate matrix -------------
-	CalculateViewMatrix();
+	CalculateViewMatrix();*/
 
 	return UPDATE_CONTINUE;
 }
@@ -148,7 +145,7 @@ void ModuleCamera3D::Move(const vec3 &Movement)
 
 	CalculateViewMatrix();
 }
-
+// ------------------------------------------------------------------
 void ModuleCamera3D::Move(Direction d, float speed)
 {
 	vec3 newPos(0, 0, 0);
@@ -225,6 +222,7 @@ void ModuleCamera3D::Rotate(float x, float y)
 
 	CalculateViewMatrix();
 }
+// -----------------------------------------------------------------
 
 void ModuleCamera3D::From3Dto2D(vec3 point, int& x, int& y)
 {
@@ -241,6 +239,7 @@ void ModuleCamera3D::From3Dto2D(vec3 point, int& x, int& y)
 	y = (screen.y + 1) * (SCREEN_HEIGHT /2);
 }
 
+// -----------------------------------------------------------------
 
 void ModuleCamera3D::FollowMultipleTargets(const p2List<p2Point<int>>* targets)
 {
@@ -253,12 +252,16 @@ void ModuleCamera3D::FollowMultipleTargets(const p2List<p2Point<int>>* targets)
 		int minX = GetMinX(targets);
 		int minY = GetMinY(targets);
 
+		//Calculate the central point of the rectangle created by all the targets
 		int dstX = (maxX + minX)/2;
 		int dstY = (maxY + minY)/2;
 
+		//Calculate the amount of PIXELS the camera need to move to reach the center
 		int moveX = dstX - CENTER_SCREEN_X;
 		int moveY = dstY - CENTER_SCREEN_Y;
 
+
+		//Calculate the zoom in/out
 		int zoom = 0;
 
 		if (Distance != 0)
@@ -269,6 +272,7 @@ void ModuleCamera3D::FollowMultipleTargets(const p2List<p2Point<int>>* targets)
 		else
 			Distance = maxX-minX;
 
+		//Now move the camera transforming PIXELS TO METERS
 		Move(vec3(PIXEL_TO_METERS(-moveX), PIXEL_TO_METERS(moveY), 0));
 
 		vec3 newPos(0);
@@ -277,14 +281,13 @@ void ModuleCamera3D::FollowMultipleTargets(const p2List<p2Point<int>>* targets)
 		Position += newPos;
 		Reference += newPos;
 
+		//Update the matrix as ususal
 		CalculateViewMatrix();
 
 	}
 }
 
-
-
-//----------------------------------------------------------------------------------------------------------------------
+//Utilities for the previous function ----------------------------------------------------------------------------------------------------------------------
 
 int ModuleCamera3D::GetMaxX(const p2List<p2Point<int>>* list)const
 {

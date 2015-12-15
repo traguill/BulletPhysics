@@ -22,6 +22,11 @@ bool ModuleSceneIntro::Start()
 	floor->color = Green;
 	App->physics->AddBody(*floor, 0);
 
+	//Create roof
+	Cube roof(318, 1, 204);
+	roof.SetPos(0, 60, 0);
+	App->physics->AddBody(roof, 0);
+
 	//Create walls
 	
 	wall_front.size.x = 318;

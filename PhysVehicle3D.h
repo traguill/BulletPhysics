@@ -53,6 +53,7 @@ public:
 	void Brake(float force);
 	void Turn(float degrees);
 	float GetKmh() const;
+	vec3 GetPos()const;
 public:
 
 	VehicleInfo info;
