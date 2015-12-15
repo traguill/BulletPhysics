@@ -95,6 +95,9 @@ public:
 	int score_red;
 	int score_blue;
 
+	//sounds
+	uint goal_fx;
+
 private:
 	int joysticks_connected = 0;
 	Timer match_time;
