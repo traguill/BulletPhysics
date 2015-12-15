@@ -166,7 +166,7 @@ bool ModulePlayer::Start()
 
 	joysticks_connected = App->input->GetNumberJoysticks();
 
-	App->camera->Move(vec3(0, 100, -100));
+	App->camera->Move(vec3(0, 50, -100));
 	App->camera->LookAt(vec3(0, 0, 0));
 	
 	return true;
@@ -224,7 +224,6 @@ update_status ModulePlayer::Update(float dt)
 		InputPlayer1();
 	if (joysticks_connected > 1)
 		InputPlayer2();
-
 	//Render
 	vehicle_red->Render();
 	vehicle_blue->Render();
@@ -577,3 +576,5 @@ void ModulePlayer::Turbo(PhysBody3D* body, bool brake)const
 	btVector3 correctedForce = (boxTrans * relativeForce) - boxTrans.getOrigin();
 	body->ApplyCentralForce(correctedForce);
 }
+
+

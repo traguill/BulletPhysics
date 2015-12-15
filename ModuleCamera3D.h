@@ -59,4 +59,6 @@ public:
 private:
 
 	mat4x4 ViewMatrix, ViewMatrixInverse;
+
+	int Distance = 0;
 };
