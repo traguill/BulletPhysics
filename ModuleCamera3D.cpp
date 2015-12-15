@@ -3,6 +3,10 @@
 #include "PhysBody3D.h"
 #include "ModuleCamera3D.h"
 
+#include "SDL\include\SDL_opengl.h"
+#include <gl/GL.h>
+#include <gl/GLU.h>
+
 ModuleCamera3D::ModuleCamera3D(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
 	CalculateViewMatrix();
@@ -145,6 +149,33 @@ void ModuleCamera3D::Move(const vec3 &Movement)
 	CalculateViewMatrix();
 }
 
+void ModuleCamera3D::Move(Direction d, float speed)
+{
+	vec3 newPos(0, 0, 0);
+	switch (d)
+	{
+	case GO_RIGHT:
+		newPos += X * speed;
+		break;
+	case GO_LEFT:
+		newPos -= X * speed;
+		break;
+	case GO_UP:
+		newPos.y += speed;
+		break;
+	case GO_DOWN:
+		newPos.y -= speed;
+		break;
+	default:
+		break;
+	}
+
+	Position += newPos;
+	Reference += newPos;
+
+	CalculateViewMatrix();
+}
+
 // -----------------------------------------------------------------
 float* ModuleCamera3D::GetViewMatrix()
 {
@@ -193,4 +224,128 @@ void ModuleCamera3D::Rotate(float x, float y)
 	Position = Reference + Z * length(Position);
 
 	CalculateViewMatrix();
+}
+
+void ModuleCamera3D::From3Dto2D(vec3 point, int& x, int& y)
+{
+	mat4x4 projection;
+	projection = perspective(60.0f, (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.125f, 512.0f);
+
+	vec3 screen = multiply(point, ViewMatrix);
+	screen = multiply(screen, projection);
+
+	screen.x /= screen.z;
+	screen.y /= screen.z;
+
+	x = (screen.x +1) * (SCREEN_WIDTH /2);
+	y = (screen.y + 1) * (SCREEN_HEIGHT /2);
+}
+
+
+void ModuleCamera3D::FollowMultipleTargets(const p2List<p2Point<int>>* targets)
+{
+	//If there aren't any targets do nothing
+	if (targets->getFirst() != NULL)
+	{
+		//Get the max and min X and Y
+		int maxX = GetMaxX(targets);
+		int maxY = GetMaxY(targets);
+		int minX = GetMinX(targets);
+		int minY = GetMinY(targets);
+
+		int dstX = (maxX + minX)/2;
+		int dstY = (maxY + minY)/2;
+
+		int moveX = dstX - CENTER_SCREEN_X;
+		int moveY = dstY - CENTER_SCREEN_Y;
+
+		int zoom = 0;
+
+		if (Distance != 0)
+		{
+			zoom = Distance - (maxX - minX);
+			Distance = maxX - minX;
+		}
+		else
+			Distance = maxX-minX;
+
+		Move(vec3(PIXEL_TO_METERS(-moveX), PIXEL_TO_METERS(moveY), 0));
+
+		vec3 newPos(0);
+		newPos -= Z * PIXEL_TO_METERS(zoom);
+
+		Position += newPos;
+		Reference += newPos;
+
+		CalculateViewMatrix();
+
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+
+int ModuleCamera3D::GetMaxX(const p2List<p2Point<int>>* list)const
+{
+	int ret = -1;
+	p2List_item<p2Point<int>>* item = list->getFirst();
+	if (item != NULL)
+		ret = item->data.x;
+	while (item)
+	{
+		if (item->data.x > ret)
+			ret = item->data.x;
+		item = item->next;
+	}
+
+	return ret;
+}
+
+int ModuleCamera3D::GetMinX(const p2List<p2Point<int>>* list)const
+{
+	int ret = -1;
+	p2List_item<p2Point<int>>* item = list->getFirst();
+	if (item != NULL)
+		ret = item->data.x;
+	while (item)
+	{
+		if (item->data.x < ret)
+			ret = item->data.x;
+		item = item->next;
+	}
+
+	return ret;
+}
+
+int ModuleCamera3D::GetMaxY(const p2List<p2Point<int>>* list)const
+{
+	int ret = -1;
+	p2List_item<p2Point<int>>* item = list->getFirst();
+	if (item != NULL)
+		ret = item->data.y;
+	while (item)
+	{
+		if (item->data.y > ret)
+			ret = item->data.y;
+		item = item->next;
+	}
+
+	return ret;
+}
+
+int ModuleCamera3D::GetMinY(const p2List<p2Point<int>>* list)const
+{
+	int ret = -1;
+	p2List_item<p2Point<int>>* item = list->getFirst();
+	if (item != NULL)
+		ret = item->data.y;
+	while (item)
+	{
+		if (item->data.y < ret)
+			ret = item->data.y;
+		item = item->next;
+	}
+
+	return ret;
 }

@@ -5,15 +5,16 @@
 #include "PhysVehicle3D.h"
 #include "PhysBody3D.h"
 
+
 ModulePlayer::ModulePlayer(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
+	
 	turn = acceleration = brake = 0.0f;
 }
 
 ModulePlayer::~ModulePlayer()
 {}
 
-// Load assets
 bool ModulePlayer::Start()
 {
 	LOG("Loading player");
@@ -164,6 +165,9 @@ bool ModulePlayer::Start()
 	Respawn();
 
 	joysticks_connected = App->input->GetNumberJoysticks();
+
+	App->camera->Move(vec3(0, 50, -100));
+	App->camera->LookAt(vec3(0, 0, 0));
 	
 	return true;
 }
@@ -176,6 +180,41 @@ bool ModulePlayer::CleanUp()
 	return true;
 }
 
+update_status ModulePlayer::PreUpdate(float dt)
+{
+	
+
+	return UPDATE_CONTINUE;
+}
+
+void ModulePlayer::Test()
+{
+	//Call the camera follow thing
+	p2Point<int> red;
+	btVector3 bt_red = vehicle_red->vehicle->getChassisWorldTransform().getOrigin();
+	vec3 red_3d(bt_red.getX(), bt_red.getY(), bt_red.getZ());
+	App->camera->From3Dto2D(red_3d, red.x, red.y);
+
+	p2Point<int> blue;
+	btVector3 bt_blue = vehicle_blue->vehicle->getChassisWorldTransform().getOrigin();
+	vec3 blue_3d(bt_blue.getX(), bt_blue.getY(), bt_blue.getZ());
+	App->camera->From3Dto2D(blue_3d, blue.x, blue.y);
+
+	p2Point<int> ball_p;
+	float m_ball[16];
+	ball.body->GetTransform(m_ball);
+	vec3 ball_3d(m_ball[12], m_ball[13], m_ball[14]);
+	App->camera->From3Dto2D(ball_3d, ball_p.x, ball_p.y);
+
+	p2List<p2Point<int>> objects;
+	objects.add(red);
+	objects.add(blue);
+	objects.add(ball_p);
+
+	//Call the camera method to follow multiple objects
+	App->camera->FollowMultipleTargets(&objects);
+}
+
 // Update: draw background
 update_status ModulePlayer::Update(float dt)
 {	
@@ -185,13 +224,12 @@ update_status ModulePlayer::Update(float dt)
 		InputPlayer1();
 	if (joysticks_connected > 1)
 		InputPlayer2();
-
 	//Render
 	vehicle_red->Render();
 	vehicle_blue->Render();
-
 	ball.body->GetTransform(ball.sphere.transform.M);
 	ball.sphere.Render();
+
 
 	p2List_item<POWERUP>* item = power_ups.getFirst();
 	while (item)
@@ -200,25 +238,11 @@ update_status ModulePlayer::Update(float dt)
 		item = item->next;
 	}
 
-
+	Test();
 
 	char title[80];
 	sprintf_s(title, "Rocket League Chinese version:   Blue %d - %d Red", score_blue, score_red);
 	App->window->SetTitle(title);
-
-	return UPDATE_CONTINUE;
-}
-
-update_status ModulePlayer::PostUpdate(float dt)
-{
-	vec3 pos;
-	pos.x = vehicle_red->vehicle->getChassisWorldTransform().getOrigin().getX();
-	pos.y = vehicle_red->vehicle->getChassisWorldTransform().getOrigin().getY();
-	pos.z = vehicle_red->vehicle->getChassisWorldTransform().getOrigin().getZ();
-	App->camera->LookAt(pos);
-	pos.y += 10;
-	pos.z -= 38;
-	App->camera->Position = pos;
 
 	return UPDATE_CONTINUE;
 }
@@ -276,17 +300,18 @@ void ModulePlayer::InputPlayer1()
 	turn = acceleration = brake = 0.0f;
 
 	//Cam Control Debug for now
-	if (App->input->GetJoystickAxis(0, RIGHT_STICK_X) != 0 || App->input->GetJoystickAxis(0, RIGHT_STICK_Y) != 0)
+	/*if (App->input->GetJoystickAxis(0, RIGHT_STICK_X) != 0 || App->input->GetJoystickAxis(0, RIGHT_STICK_Y) != 0)
 	{
 		float dx = App->input->GetJoystickAxis(0, RIGHT_STICK_X);
 		float dy = App->input->GetJoystickAxis(0, RIGHT_STICK_Y);
 		App->camera->Rotate(dx * 10, dy * 10);
-	}
+	}*/
 
 	//Break
 	if (App->input->GetJoystickButton(0, X) == KEY_REPEAT)
 	{
-		brake = BRAKE_POWER;
+		//brake = BRAKE_POWER;
+		Test();
 	}
 
 	//Direction
@@ -512,6 +537,34 @@ void ModulePlayer::InputPlayer2()
 }
 
 
+
+
+//Utilities ---------------------------------------------------------------------------------------------------------------------------------------------------
+
+bool ModulePlayer::PointInRect(const int x, const int y, const SDL_Rect rect)const
+{
+	bool ret = false;
+	if (x > rect.x && y > rect.y && x < rect.x + rect.w &&  y < rect.y + rect.h)
+		ret = true;
+	return ret;
+}
+
+int ModulePlayer::InsideRect(p2List<p2Point<int>>* list, p2List<p2Point<int>>* result, SDL_Rect rect, bool inside)const
+{
+	p2List_item<p2Point<int>>*	item = list->getFirst();
+	while (item)
+	{
+		if (PointInRect(item->data.x, item->data.y, rect) == inside)
+		{
+			p2Point<int> p(item->data);
+			result->add(p);
+		}
+
+		item = item->next;
+	}
+
+	return result->count();
+}
 void ModulePlayer::Turbo(PhysBody3D* body, bool brake)const
 {
 	btVector3 relativeForce;
@@ -523,3 +576,5 @@ void ModulePlayer::Turbo(PhysBody3D* body, bool brake)const
 	btVector3 correctedForce = (boxTrans * relativeForce) - boxTrans.getOrigin();
 	body->ApplyCentralForce(correctedForce);
 }
+
+

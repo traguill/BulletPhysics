@@ -271,6 +271,7 @@ public:
 	{
 		return vec3(u.x / v.x, u.y / v.y, u.z / v.z);
 	}
+
 };
 
 // ----------------------------------------------------------------------------------------------------------------------------
@@ -284,6 +285,7 @@ vec3 normalize(const vec3 &u);
 vec3 reflect(const vec3 &i, const vec3 &n);
 vec3 refract(const vec3 &i, const vec3 &n, float eta);
 vec3 rotate(const vec3 &u, float angle, const vec3 &v);
+
 
 // ----------------------------------------------------------------------------------------------------------------------------
 
@@ -516,3 +518,5 @@ mat4x4 rotate(float angle, const vec3 &u);
 mat4x4 scale(float x, float y, float z);
 mat4x4 translate(float x, float y, float z);
 mat4x4 transpose(const mat4x4 &Matrix);
+
+vec3 multiply(const vec3&u, const mat4x4& mat);
