@@ -4,6 +4,7 @@
 #include "Primitive.h"
 #include "PhysVehicle3D.h"
 #include "PhysBody3D.h"
+#include "ModuleCamera3D.h"
 
 
 ModulePlayer::ModulePlayer(Application* app, bool start_enabled) : Module(app, start_enabled)
@@ -27,6 +28,11 @@ bool ModulePlayer::Start()
 	ball.sphere.color = White;
 	ball.body = App->physics->AddBody(ball.sphere, 0.01f);
 	ball.body->SetPos(0, 2, 0);
+	ball.shadow.radius = 3;
+	ball.shadow.height = 0.5f;
+	ball.shadow.color = Black;
+	ball.shadow.SetRotation(90, vec3(0, 0, 1));
+	ball.shadow.SetPos(ball.sphere.GetPos().x, 1, ball.sphere.GetPos().z);
 	ball.body->collision_listeners.add(this);
 
 	//Goals
@@ -240,6 +246,10 @@ update_status ModulePlayer::Update(float dt)
 	vehicle_blue->Render();
 	ball.body->GetTransform(ball.sphere.transform.M);
 	ball.sphere.Render();
+
+	ball.shadow.radius = 1 / (ball.sphere.GetPos().y - 5);
+	ball.shadow.SetPos(ball.sphere.GetPos().x, 1, ball.sphere.GetPos().z);
+	ball.shadow.Render();
 
 
 	p2List_item<POWERUP>* item = power_ups.getFirst();

@@ -22,6 +22,7 @@ struct BALL
 {
 	Sphere sphere;
 	PhysBody3D* body;
+	Cylinder shadow;
 };
 
 struct POWERUP

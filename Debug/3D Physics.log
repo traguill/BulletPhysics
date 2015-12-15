@@ -1,26 +1,9 @@
-<<<<<<< HEAD
-﻿Compilación iniciada a las 15/12/2015 18:43:27.
-     1>Proyecto "D:\Users\guillemtc\Documents\GitHub\BulletPhysics\3D Physics.vcxproj" en el nodo 2 (Build destinos).
-     1>Link:
-=======
-﻿Compilación iniciada a las 15/12/2015 18:28:28.
+﻿Compilación iniciada a las 15/12/2015 19:31:43.
      1>Proyecto "D:\Users\guillemtc\Documents\GitHub\BulletPhysics\3D Physics.vcxproj" en el nodo 2 (Build destinos).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl- /Od /Oy- /D _MBCS /Gm /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Application.cpp Main.cpp ModuleAudio.cpp ModuleCamera3D.cpp ModuleInput.cpp ModulePhysics3D.cpp ModulePlayer.cpp ModuleRenderer3D.cpp ModuleSceneIntro.cpp ModuleWindow.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl- /Od /Oy- /D _MBCS /Gm /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt ModulePlayer.cpp
          ModulePlayer.cpp
-         Generando código...
-         Omitiendo... (no se detectaron cambios relevantes)
-         ModuleWindow.cpp
-         ModuleSceneIntro.cpp
-         ModuleRenderer3D.cpp
-         ModulePhysics3D.cpp
-         ModuleInput.cpp
-         ModuleCamera3D.cpp
-         ModuleAudio.cpp
-         Main.cpp
-         Application.cpp
        Link:
->>>>>>> refs/remotes/origin/master
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\Users\guillemtc\Documents\GitHub\BulletPhysics\Debug\3D Physics - class5.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:\Users\guillemtc\Documents\GitHub\BulletPhysics\Debug\3D Physics - class5.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\Users\guillemtc\Documents\GitHub\BulletPhysics\Debug\3D Physics - class5.lib" /MACHINE:X86 /SAFESEH:NO Debug\Application.obj
          Debug\Color.obj
          Debug\glmath.obj
@@ -39,18 +22,9 @@
          Debug\PhysVehicle3D.obj
          Debug\Primitive.obj
          Debug\Timer.obj
-<<<<<<< HEAD
-         LINK : no se encontró D:\Users\guillemtc\Documents\GitHub\BulletPhysics\Debug\3D Physics - class5.exe o no lo generó el último vínculo incremental; ejecutando vínculo completo
-=======
->>>>>>> refs/remotes/origin/master
-     1>MSVCRTD.lib(cinitexe.obj) : warning LNK4098: la biblioteca predeterminada'msvcrt.lib' entra en conflicto con otras bibliotecas; use la biblioteca /NODEFAULTLIB:biblioteca
          3D Physics.vcxproj -> D:\Users\guillemtc\Documents\GitHub\BulletPhysics\Debug\3D Physics - class5.exe
      1>Compilación del proyecto terminada "D:\Users\guillemtc\Documents\GitHub\BulletPhysics\3D Physics.vcxproj" (Build destinos).
 
 Compilación correcta.
 
-<<<<<<< HEAD
-Tiempo transcurrido 00:00:00.69
-=======
-Tiempo transcurrido 00:00:02.69
->>>>>>> refs/remotes/origin/master
+Tiempo transcurrido 00:00:02.17

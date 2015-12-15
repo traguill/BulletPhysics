@@ -99,6 +99,17 @@ void Primitive::Scale(float x, float y, float z)
 	transform.scale(x, y, z);
 }
 
+// ------------------------------------------------------------
+vec3 Primitive::GetPos()const
+{
+	vec3 ret;
+	ret.x = transform.M[12];
+	ret.y = transform.M[13];
+	ret.z = transform.M[14];
+
+	return ret;
+}
+
 // CUBE ============================================
 Cube::Cube() : Primitive(), size(1.0f, 1.0f, 1.0f)
 {
