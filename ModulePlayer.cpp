@@ -234,11 +234,15 @@ update_status ModulePlayer::Update(float dt)
 	//Joystikcks_input
 	if (joysticks_connected > 0)
 		InputPlayer1();
+	else
+		KeyInputPlayer1();
 	if (joysticks_connected > 1)
 		InputPlayer2();
+	else
+		KeyInputPlayer2();
 
-	KeyInputPlayer1();
-	KeyInputPlayer2();
+	
+	
 
 
 	//Render
