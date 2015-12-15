@@ -209,21 +209,22 @@ update_status ModulePlayer::Update(float dt)
 	}
 
 
-
-	char title[80];
-	sprintf_s(title, "Rocket League Chinese version:   Blue %d - %d Red           %i : %i", score_blue, score_red, min, (int)match_time.ReadSec());
-	App->window->SetTitle(title);
-	
 	if ((int)match_time.ReadSec() == 60)
 	{
 		min++;
 		match_time.Start();
 	}
 
-	if (min==3)
+	if (min == 3)
 	{
 		Restart();
 	}
+
+	char title[80];
+	sprintf_s(title, "Rocket League Chinese version:   Blue %d - %d Red          Time: %i : %i", score_blue, score_red, min, (int)match_time.ReadSec());
+	App->window->SetTitle(title);
+	
+	
 
 	return UPDATE_CONTINUE;
 }
