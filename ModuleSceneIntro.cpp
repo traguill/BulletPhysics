@@ -99,6 +99,8 @@ bool ModuleSceneIntro::Start()
 	App->physics->AddBody(goal_left.post_r, 0);
 	App->physics->AddBody(goal_left.post_l, 0);
 	App->physics->AddBody(goal_left.post_u, 0);
+	
+	App->audio->PlayMusic("ambient.ogg");
 
 	return ret;
 }
