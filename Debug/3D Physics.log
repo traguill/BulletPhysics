@@ -1,12 +1,12 @@
-﻿Compilación iniciada a las 16/12/2015 11:44:36.
-     1>Proyecto "D:\Users\josecr27\Desktop\BulletPhysics\3D Physics.vcxproj" en el nodo 2 (Build destinos).
+﻿Build started 16/12/2015 12:01:41.
+     1>Project "C:\Users\guillem\Documents\GitHub\BulletPhysics\3D Physics.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\soft\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl- /Od /Oy- /D _MBCS /Gm /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt ModulePlayer.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl- /Od /Oy- /D _MBCS /Gm /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt ModulePlayer.cpp
          ModulePlayer.cpp
-     1>d:\users\josecr27\desktop\bulletphysics\moduleplayer.cpp(73): warning C4305: 'argumento' : truncamiento de 'double' a 'float'
-     1>d:\users\josecr27\desktop\bulletphysics\moduleplayer.cpp(76): warning C4305: 'argumento' : truncamiento de 'double' a 'float'
+     1>c:\users\guillem\documents\github\bulletphysics\moduleplayer.cpp(73): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>c:\users\guillem\documents\github\bulletphysics\moduleplayer.cpp(76): warning C4305: 'argument' : truncation from 'double' to 'float'
        Link:
-         C:\soft\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\Users\josecr27\Desktop\BulletPhysics\Debug\3D Physics - class5.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:\Users\josecr27\Desktop\BulletPhysics\Debug\3D Physics - class5.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\Users\josecr27\Desktop\BulletPhysics\Debug\3D Physics - class5.lib" /MACHINE:X86 /SAFESEH:NO Debug\Application.obj
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\guillem\Documents\GitHub\BulletPhysics\Debug\3D Physics - class5.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\guillem\Documents\GitHub\BulletPhysics\Debug\3D Physics - class5.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\guillem\Documents\GitHub\BulletPhysics\Debug\3D Physics - class5.lib" /MACHINE:X86 /SAFESEH:NO Debug\Application.obj
          Debug\Color.obj
          Debug\glmath.obj
          Debug\Light.obj
@@ -25,9 +25,9 @@
          Debug\PhysVehicle3D.obj
          Debug\Primitive.obj
          Debug\Timer.obj
-         3D Physics.vcxproj -> D:\Users\josecr27\Desktop\BulletPhysics\Debug\3D Physics - class5.exe
-     1>Compilación del proyecto terminada "D:\Users\josecr27\Desktop\BulletPhysics\3D Physics.vcxproj" (Build destinos).
+         3D Physics.vcxproj -> C:\Users\guillem\Documents\GitHub\BulletPhysics\Debug\3D Physics - class5.exe
+     1>Done Building Project "C:\Users\guillem\Documents\GitHub\BulletPhysics\3D Physics.vcxproj" (Build target(s)).
 
-Compilación correcta.
+Build succeeded.
 
-Tiempo transcurrido 00:00:01.29
+Time Elapsed 00:00:01.72

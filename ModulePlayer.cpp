@@ -197,7 +197,7 @@ void ModulePlayer::CreateObjects()
 	ball.sphere.color = White;
 	ball.body = App->physics->AddBody(ball.sphere, 0.1f);
 	ball.body->SetPos(0, 2, 0);
-	ball.body->SetBounciness(10, 10);
+	ball.body->SetBounciness(3, 10);
 	ball.shadow.radius = 3;
 	ball.shadow.height = 0.5f;
 	ball.shadow.color = Black;
@@ -380,14 +380,17 @@ void ModulePlayer::InputPlayer1()
 	}
 
 	//Turbo
-	if (App->input->GetJoystickButton(0,A) == KEY_DOWN)
+	if (App->input->GetJoystickButton(0, A) == KEY_DOWN)
 
 		red_particle->on = true;
 
-	if (App->input->GetJoystickButton(0,A) == KEY_REPEAT)
-
-		Turbo(vehicle_red);
-
+	if (App->input->GetJoystickButton(0, A) == KEY_REPEAT)
+	{
+		if (acceleration > 0)
+			Turbo(vehicle_red);
+		if (acceleration < 0)
+			Turbo(vehicle_red, true);
+	}
 	if (App->input->GetJoystickButton(0,A) == KEY_UP)
 
 		red_particle->on = false;
@@ -477,8 +480,12 @@ void ModulePlayer::InputPlayer2()
 		blue_particle->on = true;
 
 	if (App->input->GetJoystickButton(1, A) == KEY_REPEAT)
-
-		Turbo(vehicle_blue);
+	{
+		if (acceleration > 0)
+			Turbo(vehicle_blue);
+		if (acceleration < 0)
+			Turbo(vehicle_blue, true);
+	}
 
 	if (App->input->GetJoystickButton(1, A) == KEY_UP)
 
