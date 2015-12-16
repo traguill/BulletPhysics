@@ -197,7 +197,7 @@ void ModulePlayer::CreateObjects()
 	ball.sphere.color = White;
 	ball.body = App->physics->AddBody(ball.sphere, 0.1f);
 	ball.body->SetPos(0, 2, 0);
-	ball.body->SetBounciness(10, 10);
+	ball.body->SetBounciness(3, 10);
 	ball.shadow.radius = 3;
 	ball.shadow.height = 0.5f;
 	ball.shadow.color = Black;
