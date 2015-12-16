@@ -260,29 +260,19 @@ void ModuleCamera3D::FollowMultipleTargets(const p2List<p2Point<int>>* targets)
 		int moveX = dstX - CENTER_SCREEN_X;
 		int moveY = dstY - CENTER_SCREEN_Y;
 
-
-		//Calculate the zoom in/out
-		int zoom = 0;
-
-		if (Distance != 0)
-		{
-			zoom = Distance - (maxX - minX);
-			Distance = maxX - minX;
-		}
-		else
-			Distance = maxX-minX;
-
 		//Now move the camera transforming PIXELS TO METERS
 		Move(vec3(PIXEL_TO_METERS(-moveX), PIXEL_TO_METERS(moveY), 0));
 
-		vec3 newPos(0);
-		newPos -= Z * PIXEL_TO_METERS(zoom);
+		//Calculate the zoom in/out
 
-		Position += newPos;
-		Reference += newPos;
+		float Distance = (120.0f / SCREEN_WIDTH)*(maxX - minX);
 
-		//Update the matrix as ususal
-		CalculateViewMatrix();
+		if (Distance > 120.0f)
+			Distance = 120.0f;
+		if (Distance < 20.0f)
+			Distance = 20.0f;
+
+		App->renderer3D->OnResize(SCREEN_WIDTH, SCREEN_HEIGHT, Distance);
 
 	}
 }

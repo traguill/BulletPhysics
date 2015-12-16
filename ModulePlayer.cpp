@@ -37,7 +37,7 @@ bool ModulePlayer::Start()
 
 	joysticks_connected = App->input->GetNumberJoysticks();
 
-	App->camera->Move(vec3(0, 50, -150));
+	App->camera->Move(vec3(0, 80, -180));
 	App->camera->LookAt(vec3(0, 0, 0));
 	goal_fx = App->audio->LoadFx("goal.ogg");
 
@@ -207,12 +207,12 @@ void ModulePlayer::CreateObjects()
 
 	//Goals
 	Cube g_red(10, 21, 60);
-	g_red.SetPos(172, 5.5f, 10);
+	g_red.SetPos(168, 5.5f, 10);
 	goal_red = App->physics->AddBody(g_red, 0, true);
 	goal_red->collision_listeners.add(this);
 
 	Cube b_red(10, 21, 60);
-	b_red.SetPos(-172, 5.5f, 0);
+	b_red.SetPos(-168, 5.5f, 0);
 	goal_blue = App->physics->AddBody(b_red, 0, true);
 	goal_blue->collision_listeners.add(this);
 
