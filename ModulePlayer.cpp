@@ -39,6 +39,7 @@ bool ModulePlayer::Start()
 
 	App->camera->Move(vec3(0, 50, -150));
 	App->camera->LookAt(vec3(0, 0, 0));
+	goal_fx = App->audio->LoadFx("goal.ogg");
 
 	return true;
 }
@@ -140,12 +141,14 @@ void ModulePlayer::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 	//Goals
 	if (body1 == ball.body && body2 == goal_red)
 	{	
+		App->audio->PlayFx(goal_fx);
 		Respawn();
 		score_blue += 1;
 	}
 
 	if (body1 == ball.body && body2 == goal_blue)
 	{
+		App->audio->PlayFx(goal_fx);
 		Respawn();
 		score_red += 1;
 	}
