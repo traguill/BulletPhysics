@@ -267,6 +267,11 @@ void ModuleCamera3D::FollowMultipleTargets(const p2List<p2Point<int>>* targets)
 
 		float Distance = (120.0f / SCREEN_WIDTH)*(maxX - minX);
 
+		if (Distance > 120.0f)
+			Distance = 120.0f;
+		if (Distance < 20.0f)
+			Distance = 20.0f;
+
 		App->renderer3D->OnResize(SCREEN_WIDTH, SCREEN_HEIGHT, Distance);
 
 	}

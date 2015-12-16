@@ -97,7 +97,7 @@ bool ModuleRenderer3D::Init()
 	}
 
 	// Projection matrix for
-	OnResize(SCREEN_WIDTH, SCREEN_HEIGHT, 60.0f);
+	OnResize(SCREEN_WIDTH, SCREEN_HEIGHT, 20.0f);
 
 	return ret;
 }
