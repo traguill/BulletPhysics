@@ -15,8 +15,10 @@ struct Particle
 {
 	float life;
 	Cube shape;
+	Color color;
 
 	void CreateParticle(vec3 pos);
+	void UpdateColor();
 };
 
 enum TYPE
