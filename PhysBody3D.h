@@ -25,6 +25,8 @@ public:
 	btTransform GetRealTransform()const;
 	void ApplyCentralForce(btVector3& force);
 
+	void SetBounciness(const float restitution,const float friction);
+
 private:
 	btRigidBody* body = nullptr;
 
