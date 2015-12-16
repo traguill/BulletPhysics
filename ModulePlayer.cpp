@@ -39,7 +39,7 @@ bool ModulePlayer::Start()
 
 	App->camera->Move(vec3(0, 50, -150));
 	App->camera->LookAt(vec3(0, 0, 0));
-	goal_fx = App->audio->LoadFx("goal.ogg");
+	//goal_fx = App->audio->LoadFx("goal.ogg");
 
 	return true;
 }
@@ -141,14 +141,14 @@ void ModulePlayer::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 	//Goals
 	if (body1 == ball.body && body2 == goal_red)
 	{	
-		App->audio->PlayFx(goal_fx);
+		//App->audio->PlayFx(goal_fx);
 		Respawn();
 		score_blue += 1;
 	}
 
 	if (body1 == ball.body && body2 == goal_blue)
 	{
-		App->audio->PlayFx(goal_fx);
+		//App->audio->PlayFx(goal_fx);
 		Respawn();
 		score_red += 1;
 	}
@@ -206,13 +206,13 @@ void ModulePlayer::CreateObjects()
 	ball.body->collision_listeners.add(this);
 
 	//Goals
-	Cube g_red(10, 11, 35);
-	g_red.SetPos(169, 5.5f, 0);
+	Cube g_red(10, 21, 60);
+	g_red.SetPos(172, 5.5f, 10);
 	goal_red = App->physics->AddBody(g_red, 0, true);
 	goal_red->collision_listeners.add(this);
 
-	Cube b_red(10, 11, 35);
-	b_red.SetPos(-169, 5.5f, 0);
+	Cube b_red(10, 21, 60);
+	b_red.SetPos(-172, 5.5f, 0);
 	goal_blue = App->physics->AddBody(b_red, 0, true);
 	goal_blue->collision_listeners.add(this);
 
@@ -579,7 +579,7 @@ void ModulePlayer::KeyInputPlayer1()
 		red_particle->on = false;
 	
 	//FrontFlip
-	if (App->input->GetKey(SDL_SCANCODE_J) == KEY_DOWN)
+	if (App->input->GetKey(SDL_SCANCODE_K) == KEY_DOWN)
 	{
 		btVector3 relativeForce = btVector3(0, 485 * vehicle_red->info.mass, 0);
 		btVector3 relativePosition = btVector3(0, 0, -vehicle_red->info.chassis_size.z / 2);
@@ -608,7 +608,7 @@ void ModulePlayer::KeyInputPlayer1()
 	}
 
 	//Roll (left)
-	if (App->input->GetKey(SDL_SCANCODE_K) == KEY_DOWN)
+	if (App->input->GetKey(SDL_SCANCODE_J) == KEY_DOWN)
 	{
 		btTransform boxTrans;
 		vehicle_red->vehicle->getRigidBody()->getMotionState()->getWorldTransform(boxTrans);

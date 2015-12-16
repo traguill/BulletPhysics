@@ -47,10 +47,10 @@ bool ModuleSceneIntro::Start()
 	wall_right.SetPos(169, 30, 0);
 	App->physics->AddBody(wall_right, 0);
 
-	Cube wr1(10, 12, 84);
-	wr1.SetPos(164, 6, 60.0f);
+	Cube wr1(10, 30, 70);
+	wr1.SetPos(164, 6, 65.0f);
 	App->physics->AddBody(wr1, 0);
-	wr1.SetPos(164, 6, -60.0f);
+	wr1.SetPos(164, 6, -65.0f);
 	App->physics->AddBody(wr1, 0);
 	Cube wr2(10, 48, 204);
 	wr2.SetPos(164, 36, 0);
@@ -62,23 +62,23 @@ bool ModuleSceneIntro::Start()
 	wall_left.SetPos(-169, 30, 0);
 	App->physics->AddBody(wall_left, 0);
 
-	Cube wl1(10, 12, 84);
-	wl1.SetPos(-164, 6, 60.0f);
+	Cube wl1(10, 30, 70);
+	wl1.SetPos(-164, 6, 65.0f);
 	App->physics->AddBody(wl1, 0);
-	wl1.SetPos(-164, 6, -60.0f);
+	wl1.SetPos(-164, 6, -65.0f);
 	App->physics->AddBody(wl1, 0);
 	Cube wl2(10, 48, 204);
-	wl2.SetPos(-164, 36, 0);
+	wl2.SetPos(-164, 38, 0);
 	App->physics->AddBody(wl2, 0);
 
 	//Create Goals
-	goal_right.post_r.Scale(1, 12, 1);
-	goal_right.post_l.Scale(1, 12, 1);
-	goal_right.post_u.Scale(1, 1, 37);
+	goal_right.post_r.Scale(1, 30, 1);
+	goal_right.post_l.Scale(1, 30, 1);
+	goal_right.post_u.Scale(1, 1, 60);
 
-	goal_right.post_r.SetPos(159, 6, 17.5f);
-	goal_right.post_l.SetPos(159, 6, -17.5f);
-	goal_right.post_u.SetPos(159, 12, 0);
+	goal_right.post_r.SetPos(159, 6, 30);
+	goal_right.post_l.SetPos(159, 6, -30);
+	goal_right.post_u.SetPos(159, 21, 0);
 
 	goal_right.post_l.color = goal_right.post_r.color = goal_right.post_u.color = Red;
 
@@ -86,13 +86,13 @@ bool ModuleSceneIntro::Start()
 	App->physics->AddBody(goal_right.post_l, 0);
 	App->physics->AddBody(goal_right.post_u, 0);
 
-	goal_left.post_r.Scale(1, 12, 1);
-	goal_left.post_l.Scale(1, 12, 1);
-	goal_left.post_u.Scale(1, 1, 37);
+	goal_left.post_r.Scale(1, 30, 1);
+	goal_left.post_l.Scale(1, 30, 1);
+	goal_left.post_u.Scale(1, 1, 60);
 
-	goal_left.post_r.SetPos(-159, 6, 17.5f);
-	goal_left.post_l.SetPos(-159, 6, -17.5f);
-	goal_left.post_u.SetPos(-159, 12, 0);
+	goal_left.post_r.SetPos(-159, 6, 30);
+	goal_left.post_l.SetPos(-159, 6, -30);
+	goal_left.post_u.SetPos(-159, 21, 0);
 
 	goal_left.post_l.color = goal_left.post_r.color = goal_left.post_u.color = Blue;
 
@@ -100,7 +100,7 @@ bool ModuleSceneIntro::Start()
 	App->physics->AddBody(goal_left.post_l, 0);
 	App->physics->AddBody(goal_left.post_u, 0);
 	
-	App->audio->PlayMusic("ambient.ogg",0.0f);
+	//App->audio->PlayMusic("ambient.ogg",0.0f);
 
 	return ret;
 }

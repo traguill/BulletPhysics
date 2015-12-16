@@ -100,7 +100,7 @@ public:
 	int score_blue;
 
 	//Sound
-	uint goal_fx;
+	//uint goal_fx;
 
 private:
 	int joysticks_connected = 0;
