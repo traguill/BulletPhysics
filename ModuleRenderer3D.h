@@ -17,7 +17,7 @@ public:
 	update_status PostUpdate(float dt);
 	bool CleanUp();
 
-	void OnResize(int width, int height);
+	void OnResize(int width, int height, float fovy);
 
 public:
 
