@@ -53,6 +53,7 @@ void ParticleSystem::Update(float dt)
 		}
 		else
 		{
+			item->data->UpdateColor();
 			item->data->shape.Render();
 			item = item->next;
 		}
@@ -66,5 +67,30 @@ void Particle::CreateParticle(vec3 pos)
 	life = PARTICLE_LIFE;
 	shape.size = vec3(1, 1, 1);
 	shape.SetPos(pos.x, pos.y, pos.z);
-	shape.color = Orange;
+	color = Orange;
+	shape.color = color;
+
+}
+
+void Particle::UpdateColor()
+{
+	float red = color.r;
+	float blue = color.b;
+	float green = color.g;
+
+	//Start getting darker at the middle of his life
+	if (life < PARTICLE_LIFE * 0.5f)
+	{
+		float darkness = -(life - (PARTICLE_LIFE*0.5f)) / (PARTICLE_LIFE*0.5f);
+		darkness = 1 - darkness;
+
+		red *= darkness;
+		blue *= darkness;
+		green *= darkness;
+
+		color = Color(red, green, blue);
+	}
+	
+
+	shape.color = color;
 }
