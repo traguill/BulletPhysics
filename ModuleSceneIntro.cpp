@@ -20,7 +20,7 @@ bool ModuleSceneIntro::Start()
 	//Create floor
 	floor = new Cube(318, 1, 204);
 	floor->color = Green;
-	App->physics->AddBody(*floor, 0);
+	App->physics->AddBody(*floor, 0)->SetBounciness(0.1, 2);
 
 	//Create roof
 	Cube roof(318, 1, 204);
