@@ -5,7 +5,7 @@
 #include "PhysVehicle3D.h"
 #include "PhysBody3D.h"
 #include "ModuleCamera3D.h"
-
+#include "ParticleSystem.h"
 
 ModulePlayer::ModulePlayer(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
@@ -24,6 +24,12 @@ bool ModulePlayer::Start()
 	score_blue = score_red = 0;
 
 	CreateObjects();
+	
+	red_particle = new ParticleSystem();
+	red_particle->CreateParticleSystem(vehicle_red, vec3(0, 1, -1.5f), Fire, false);
+
+	blue_particle = new ParticleSystem();
+	blue_particle->CreateParticleSystem(vehicle_blue, vec3(0, 1, -1.5f), Fire, false);
 
 	Respawn();
 
@@ -57,6 +63,9 @@ update_status ModulePlayer::Update(float dt)
 		InputPlayer2();
 	else
 		KeyInputPlayer2();
+
+	red_particle->Update(dt);
+	blue_particle->Update(dt);
 
 	//Render
 	vehicle_red->Render();
@@ -368,10 +377,17 @@ void ModulePlayer::InputPlayer1()
 	}
 
 	//Turbo
-	if (App->input->GetJoystickButton(0, A) == KEY_REPEAT)
-	{
+	if (App->input->GetJoystickButton(0,A) == KEY_DOWN)
+
+		red_particle->on = true;
+
+	if (App->input->GetJoystickButton(0,A) == KEY_REPEAT)
+
 		Turbo(vehicle_red);
-	}
+
+	if (App->input->GetJoystickButton(0,A) == KEY_UP)
+
+		red_particle->on = false;
 
 	//FrontFlip
 	if (App->input->GetJoystickButton(0, B) == KEY_DOWN)
@@ -453,10 +469,17 @@ void ModulePlayer::InputPlayer2()
 
 
 	//Turbo
+	if (App->input->GetJoystickButton(1, A) == KEY_DOWN)
+
+		blue_particle->on = true;
+
 	if (App->input->GetJoystickButton(1, A) == KEY_REPEAT)
-	{
+
 		Turbo(vehicle_blue);
-	}
+
+	if (App->input->GetJoystickButton(1, A) == KEY_UP)
+
+		blue_particle->on = false;
 
 	//FrontFlip
 	if (App->input->GetJoystickButton(1, B) == KEY_DOWN)
@@ -539,12 +562,18 @@ void ModulePlayer::KeyInputPlayer1()
 		acceleration = -MAX_ACCELERATION;
 	}
 
-
 	//Turbo
+	if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
+
+		red_particle->on = true;
+
 	if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_REPEAT)
-	{
+
 		Turbo(vehicle_red);
-	}
+
+	if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_UP)
+
+		red_particle->on = false;
 	
 	//FrontFlip
 	if (App->input->GetKey(SDL_SCANCODE_J) == KEY_DOWN)
@@ -628,10 +657,17 @@ void ModulePlayer::KeyInputPlayer2()
 	}
 
 	//Turbo
+	if (App->input->GetKey(SDL_SCANCODE_KP_1) == KEY_DOWN)
+
+		blue_particle->on = true;
+
 	if (App->input->GetKey(SDL_SCANCODE_KP_1) == KEY_REPEAT)
-	{
+
 		Turbo(vehicle_blue);
-	}
+
+	if (App->input->GetKey(SDL_SCANCODE_KP_1) == KEY_UP)
+
+		blue_particle->on = false;
 	
 	//FrontFlip
 	if (App->input->GetKey(SDL_SCANCODE_KP_5) == KEY_DOWN)

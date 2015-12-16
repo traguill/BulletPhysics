@@ -84,3 +84,13 @@ void PhysBody3D::SetBounciness(float restitution, float friction)
 	body->setFriction(friction);
 	body->setRestitution(restitution);
 }
+
+//----------------------------------------------------------
+vec3 PhysBody3D::GetPosition()const
+{
+	vec3 ret;
+	ret.x = body->getWorldTransform().getOrigin().getX();
+	ret.y = body->getWorldTransform().getOrigin().getY();
+	ret.z = body->getWorldTransform().getOrigin().getZ();
+	return ret;
+}

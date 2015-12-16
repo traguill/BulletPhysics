@@ -1,9 +1,6 @@
-﻿Build started 16/12/2015 8:00:55.
+﻿Build started 16/12/2015 9:09:23.
      1>Project "C:\Users\guillem\Documents\GitHub\BulletPhysics\3D Physics.vcxproj" on node 2 (Build target(s)).
-     1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl- /Od /Oy- /D _MBCS /Gm /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt PhysBody3D.cpp
-         PhysBody3D.cpp
-       Link:
+     1>Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\guillem\Documents\GitHub\BulletPhysics\Debug\3D Physics - class5.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\guillem\Documents\GitHub\BulletPhysics\Debug\3D Physics - class5.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\guillem\Documents\GitHub\BulletPhysics\Debug\3D Physics - class5.lib" /MACHINE:X86 /SAFESEH:NO Debug\Application.obj
          Debug\Color.obj
          Debug\glmath.obj
@@ -18,6 +15,7 @@
          Debug\ModuleRenderer3D.obj
          Debug\ModuleSceneIntro.obj
          Debug\ModuleWindow.obj
+         Debug\ParticleSystem.obj
          Debug\PhysBody3D.obj
          Debug\PhysVehicle3D.obj
          Debug\Primitive.obj
@@ -27,4 +25,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:01.39
+Time Elapsed 00:00:00.37

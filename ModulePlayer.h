@@ -14,6 +14,7 @@ struct SDL_Rect;
 
 #define POWER_SPEED 10000
 
+struct ParticleSystem;
 
 struct BALL
 {
@@ -71,6 +72,9 @@ public:
 	Cylinder				shadow_red;
 	PhysVehicle3D*		vehicle_blue = NULL;
 	Cylinder				shadow_blue;
+
+	ParticleSystem*		red_particle;
+	ParticleSystem*		blue_particle;
 
 	float turn;
 	float acceleration;

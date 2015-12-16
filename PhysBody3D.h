@@ -7,6 +7,8 @@ class btRigidBody;
 class btTransform;
 class btVector3;
 class Module;
+class vec3;
+
 // =================================================
 struct PhysBody3D
 {
@@ -21,6 +23,7 @@ public:
 	void SetPos(float x, float y, float z);
 	void Stop();
 	void SetRotation(float x, float y, float z);
+	vec3 GetPosition()const;
 
 	btTransform GetRealTransform()const;
 	void ApplyCentralForce(btVector3& force);
