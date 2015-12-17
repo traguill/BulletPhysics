@@ -578,9 +578,12 @@ void ModulePlayer::KeyInputPlayer1()
 		red_particle->on = true;
 
 	if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_REPEAT)
-
-		Turbo(vehicle_red);
-
+	{
+		if (acceleration > 0)
+			Turbo(vehicle_red);
+		if (acceleration < 0)
+			Turbo(vehicle_red, true);
+	}
 	if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_UP)
 
 		red_particle->on = false;
@@ -672,8 +675,12 @@ void ModulePlayer::KeyInputPlayer2()
 		blue_particle->on = true;
 
 	if (App->input->GetKey(SDL_SCANCODE_KP_1) == KEY_REPEAT)
-
-		Turbo(vehicle_blue);
+	{
+		if (acceleration > 0)
+			Turbo(vehicle_blue);
+		if (acceleration < 0)
+			Turbo(vehicle_blue, true);
+	}
 
 	if (App->input->GetKey(SDL_SCANCODE_KP_1) == KEY_UP)
 
